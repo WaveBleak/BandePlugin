@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class BandeCommand implements CommandExecutor {
             //TODO: Rivaler
             //TODO: Leaderboard
 
-            inventory.setItem(4, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
+            inventory.setItem(4, bande.getDisplaySkull());
 
             String levelupHead = "";
             String levelupColor = "";
@@ -95,12 +96,14 @@ public class BandeCommand implements CommandExecutor {
                 lore.add(" ");
                 lore.add("&8&l\u3014 &c&lI HAR IKKE OPN\u00C5ET ALLE KRAV &8&l\u3015");
                 inventory.setItem(13, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(levelupHead), levelupColor + "&lLEVELUP", lore.toArray(new String[0])));
-                }
+            }
 
-            inventory.setItem(19, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
-            inventory.setItem(21, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
-            inventory.setItem(23, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
-            inventory.setItem(25, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
+            inventory.setItem(19, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzNjNmMyNTFiMjMzYmUxMzgxMjQ1ZmRkZDNkMjM5MTg1NWIyN2FmYzM3ZjBjMTdmNzRiY2Q1MmY4MDkyYWNlNCJ9fX0="), "&b&lBank"));
+            inventory.setItem(21, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzE4ZTA1MTI2M2JjNDE5ZjBhODBiZGNkMjkzN2YyMDkzNzI0MWRmMGRmNTMwMDM1NzEyZWEyYTcyZWQ5YjQ1NSJ9fX0="), "&b&lUpgrades"));
+            //inventory.setItem(23, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&lMedlemmer"));
+            inventory.setItem(25, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDhmZDcxMjZjZDY3MGM3OTcxYTI4NTczNGVkZmRkODAyNTcyYTcyYTNmMDVlYTQxY2NkYTQ5NDNiYTM3MzQ3MSJ9fX0="), "&b&lRelationer"));
+
+
 
         }
 
@@ -119,16 +122,24 @@ public class BandeCommand implements CommandExecutor {
                         break;
                 }
             } else { // Bande menu
-                //TODO: Add player manager for highups (3+)
-                //TODO: Upgrades shop
-                //TODO: Bank
-                //TODO: Levelup Button
-                //TODO: Allierede
-                //TODO: Rivaler
-                //TODO: Leaderboard
-
-                List<Bande> sortedLeaderboard = BandePlugin.instance.bander.stream().sorted(Comparator.comparingDouble(x -> x.getLevel())).collect(Collectors.toList());
-                Collections.reverse(sortedLeaderboard);
+                switch (event.getSlot()) {
+                    case 13:
+                        if(bande.canLevelUp()) bande.levelUp(true, false);
+                        openMainInventory(player);
+                        break;
+                    case 19:
+                        showBankMenu(player);
+                        break;
+                    case 21:
+                        showUpgradesMenu(player);
+                        break;
+                    case 23:
+                        showMemberManager(player);
+                        break;
+                    case 25:
+                        showRelationsMenu(player);
+                        break;
+                }
 
 
 
@@ -136,29 +147,193 @@ public class BandeCommand implements CommandExecutor {
             }
         };
 
+        InventoryData data = new InventoryData(lambda, inventory);
+
+        inventoryManager.put(player, data);
+
+
+        if(bande != null) {
+            Random random = new Random();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if(inventoryManager.get(player) == null) {
+                        cancel();
+                        return;
+                    }
+                    if (!inventoryManager.get(player).equals(data)) {
+                        cancel();
+                        return;
+                    }
+                    List<OfflinePlayer> members = new ArrayList<>(bande.members().keySet());
+                    inventory.setItem(23, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(members.get(random.nextInt(members.size()))), "&b&lMedlemmer"));
+                }
+            }.runTaskTimer(BandePlugin.instance, 0, 20);
+        }
+    }
+
+    public void showBankMenu(Player player) {
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" BANK");
+        InventoryUtil.createBorders(inventory);
+
+        Bande bande = Bande.getBande(player);
+
+        if(bande == null) return;
+
+        inventory.setItem(4, bande.getDisplaySkull());
+        inventory.setItem(36, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+
+        player.openInventory(inventory);
+
+        InventoryManager lambda = (InventoryClickEvent event) -> {
+            switch (event.getSlot()) {
+                case 36:
+                    openMainInventory(player);
+                    break;
+            }
+
+        };
+
         inventoryManager.put(player, new InventoryData(lambda, inventory));
     }
 
+    public void showUpgradesMenu(Player player) {
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" UPGRADES");
+        InventoryUtil.createBorders(inventory);
+        Bande bande = Bande.getBande(player);
+
+        if(bande == null) return;
+        inventory.setItem(4, bande.getDisplaySkull());
+        inventory.setItem(36, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+
+
+        player.openInventory(inventory);
+
+
+        InventoryManager lambda = (InventoryClickEvent event) -> {
+            switch (event.getSlot()) {
+                case 36:
+                    openMainInventory(player);
+                    break;
+            }
+
+        };
+
+        inventoryManager.put(player, new InventoryData(lambda, inventory));
+
+    }
+
+    public void showMemberManager(Player player) {
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" MEDLEMMER");
+        InventoryUtil.createBorders(inventory);
+        Bande bande = Bande.getBande(player);
+
+        if(bande == null) return;
+        inventory.setItem(4, bande.getDisplaySkull());
+        inventory.setItem(36, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+
+        int i = 10;
+        HashMap<Integer, OfflinePlayer> slotToMember = new HashMap<>();
+        ItemStack ownerSkull = ItemsUtil.getSkull(bande.owner());
+
+        ItemsUtil.setNameAndLore(ownerSkull,
+                ChatColor.RED + "[Bande Leder] " + ChatColor.AQUA + bande.owner().getName(), "&fBalance: " + economy.getBalance(bande.owner()));
+
+        inventory.setItem(i, ownerSkull);
+        slotToMember.put(i, bande.owner());
+
+        for(OfflinePlayer offlinePlayer : bande.members().keySet()) {
+            if(offlinePlayer.equals(bande.owner())) continue;
+            if(i == 34) continue;
+            i++;
+            if(i == 16 || i == 25) i += 2;
+            String title = ChatColor.AQUA + offlinePlayer.getName();
+
+            ItemStack memberSkull = ItemsUtil.getSkull(offlinePlayer);
+
+            ItemsUtil.setNameAndLore(memberSkull, title, "&fBalance: " + economy.getBalance(offlinePlayer));
+
+            inventory.setItem(i, memberSkull);
+            slotToMember.put(i, offlinePlayer);
+        }
+
+        player.openInventory(inventory);
+
+        InventoryManager lambda = (InventoryClickEvent event) -> {
+            if(event.getSlot() == 36) {
+                openMainInventory(player);
+                return;
+            }
+            OfflinePlayer victim = slotToMember.get(event.getSlot());
+            if(!slotToMember.get(event.getSlot()).equals(bande.owner())) {
+                bande.members().entrySet().stream().filter((set) -> {
+                    if(set.getKey().equals(player)) {
+                        return true;
+                    }
+                    return false;
+                }).findAny().ifPresent((set) -> {
+                    if(victim.equals(bande.owner())) return;
+                    int rank = set.getValue();
+
+                    if(rank >= Bande.PermissionLevel.RIGHTHANDMAN) {
+                        bande.kickMember(victim, player);
+                        showMemberManager(player);
+                    }
+                });
+            }
+        };
+
+        inventoryManager.put(player, new InventoryData(lambda, inventory));
+
+
+
+    }
+
+    public void showRelationsMenu(Player player) {
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" RELATIONER");
+        InventoryUtil.createBorders(inventory);
+        Bande bande = Bande.getBande(player);
+
+        if(bande == null) return;
+        inventory.setItem(4, bande.getDisplaySkull());
+        inventory.setItem(36, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+
+
+        player.openInventory(inventory);
+
+
+        InventoryManager lambda = (InventoryClickEvent event) -> {
+            switch (event.getSlot()) {
+                case 36:
+                    openMainInventory(player);
+                    break;
+            }
+
+        };
+
+        inventoryManager.put(player, new InventoryData(lambda, inventory));
+
+    }
 
     public void showAnvilGUI(Player player) {
         AnvilGUI.Builder builder = new AnvilGUI.Builder();
         builder.plugin(BandePlugin.instance);
         builder.text("Indtast navn");
         builder.onClick((slot, stateSnapshot) -> {
-             if(slot != AnvilGUI.Slot.OUTPUT) {
-                 return Collections.emptyList();
-             }
+            if(slot != AnvilGUI.Slot.OUTPUT) {
+                return Collections.emptyList();
+            }
 
-             boolean isBannedName = Arrays.stream(BandePlugin.bannedNames).anyMatch(string -> string.toLowerCase().contains(stateSnapshot.getText().toLowerCase()));
+            boolean isBannedName = Arrays.stream(BandePlugin.bannedNames).anyMatch(string -> string.toLowerCase().contains(stateSnapshot.getText().toLowerCase()));
 
-             if(isBannedName) {
-                 return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText(ChatColor.RED + "Banned navn"));
-             }
+            if(isBannedName) {
+                return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText(ChatColor.RED + "Banned navn"));
+            }
 
-             return Arrays.asList(
-                     AnvilGUI.ResponseAction.close(),
-                     AnvilGUI.ResponseAction.run(() -> createNamedBande(player, stateSnapshot.getText()))
-             );
+            return Arrays.asList(
+                    AnvilGUI.ResponseAction.close(),
+                    AnvilGUI.ResponseAction.run(() -> createNamedBande(player, stateSnapshot.getText()))
+            );
         });
 
         builder.open(player);

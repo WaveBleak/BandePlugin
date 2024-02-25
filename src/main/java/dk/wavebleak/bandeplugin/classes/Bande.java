@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Bande {
 
@@ -67,14 +68,74 @@ public class Bande {
         this.bandeID = UUID.randomUUID().toString();
     }
 
+    public int maxLevel() {
+        return 5;
+    }
+
     public ItemStack getDisplaySkull() {
         ItemStack skull = ItemsUtil.getSkull(owner());
 
         return ItemsUtil.setNameAndLore(skull, "&c&l" + getName(), "&fEjet af: &7" + owner().getName(), "&fLevel: &7" + getLevel(), "&fVagt Kills: &7" + getVagtKills());
     }
 
-    public void levelUp(boolean verbose) {
-        if(this.level >= 5) return;
+    public Requirement requirement1() {
+        switch (this.level) {
+            case 1:
+                return new Requirement(Requirement.LevelUpRequirement.KILLS, 100);
+            case 2:
+                return new Requirement(Requirement.LevelUpRequirement.ALLIES, 1);
+            case 3:
+                return new Requirement(Requirement.LevelUpRequirement.MEMBERS, 6);
+            case 4:
+                return new Requirement(Requirement.LevelUpRequirement.OFFIKILLS, 20);
+            case 5:
+                return new Requirement(Requirement.LevelUpRequirement.KILLS, 1000);
+        }
+        return new Requirement(Requirement.LevelUpRequirement.DIRKILLS, 9999999);
+    }
+    public Requirement requirement2()  {
+        switch (this.level) {
+            case 1:
+                return new Requirement(Requirement.LevelUpRequirement.BANK, 25000);
+            case 2:
+                return new Requirement(Requirement.LevelUpRequirement.RIVALS, 2);
+            case 3:
+                return new Requirement(Requirement.LevelUpRequirement.OFFIKILLS, 3);
+            case 4:
+                return new Requirement(Requirement.LevelUpRequirement.ALLIES, 4);
+            case 5:
+                return new Requirement(Requirement.LevelUpRequirement.BANK, 1000000);
+        }
+        return new Requirement(Requirement.LevelUpRequirement.KILLS, 9999999);
+    }
+    public Requirement requirement3() {
+        switch (this.level) {
+            case 1:
+                return new Requirement(Requirement.LevelUpRequirement.VAGTKILLS, 2);
+            case 2:
+                return new Requirement(Requirement.LevelUpRequirement.VAGTKILLS, 5);
+            case 3:
+                return new Requirement(Requirement.LevelUpRequirement.KILLS, 500);
+            case 4:
+                return new Requirement(Requirement.LevelUpRequirement.RIVALS, 4);
+            case 5:
+                return new Requirement(Requirement.LevelUpRequirement.INSKILLS, 3);
+        }
+        return new Requirement(Requirement.LevelUpRequirement.MEMBERS, 9999999);
+    }
+
+    public boolean canLevelUp() {
+        return requirement1().meetsRequirements(this) && requirement2().meetsRequirements(this) && requirement3().meetsRequirements(this);
+    }
+
+    public void levelUp(boolean verbose, boolean bypassRequirements) {
+        if(this.level > 5) return;
+        if(!bypassRequirements) {
+            if(!canLevelUp()) return;
+            requirement1().subtractIfMoneyRequirement(this);
+            requirement2().subtractIfMoneyRequirement(this);
+            requirement3().subtractIfMoneyRequirement(this);
+        }
         if(verbose) {
             Color[] colors = ColorUtil.getTop3ColorsFromSkin(ownerUUID);
             for(OfflinePlayer player : members().keySet()) {
@@ -83,14 +144,42 @@ public class Bande {
 
                 new InstantFirework(
                         FireworkEffect.builder()
-                            .withTrail()
-                            .withColor(colors[0], colors[1], colors[2])
-                            .build(),
+                                .withTrail()
+                                .withColor(colors[0], colors[1], colors[2])
+                                .build(),
                         target.getLocation()
                 );
             }
         }
         this.level++;
+    }
+
+    public boolean deposit(OfflinePlayer player, long amount, boolean isPlayerAffected) {
+        if(isPlayerAffected) {
+            if(BandePlugin.economy.getBalance(player) >= amount) {
+                BandePlugin.economy.withdrawPlayer(player, amount);
+                this.bank += amount;
+                return true;
+            } else {
+                return false;
+            }
+        }
+        this.bank += amount;
+        return true;
+    }
+
+    public boolean withdraw(OfflinePlayer player, long amount, boolean isPlayerAffected) {
+        if(isPlayerAffected) {
+            if(this.bank >= amount) {
+                BandePlugin.economy.depositPlayer(player, amount);
+                this.bank -= amount;
+                return true;
+            } else {
+                return false;
+            }
+        }
+        this.bank -= amount;
+        return true;
     }
 
     public void addKill() {
@@ -112,10 +201,6 @@ public class Bande {
         return this.level;
     }
 
-    public void levelUp() {
-        levelUp(true);
-    }
-
     public int getMaxMebmers() {
         return 3 + (level * 2);
     }
@@ -123,6 +208,19 @@ public class Bande {
 
     public int getCurrentMembers() {
         return members().size();
+    }
+
+    public void kickMember(OfflinePlayer victim, OfflinePlayer player) {
+        membersUUID.remove(victim.getUniqueId().toString());
+
+        for(OfflinePlayer member : members().keySet()) {
+            if(member.equals(player)) continue;
+            if(member.isOnline()) {
+                member.getPlayer().sendMessage(ChatColor.RED + player.getName() + " har kicket " + victim.getName() + " fra banden!");
+            }
+        }
+        if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.GREEN + victim.getName() + " er nu smidt ud fra banden!");
+        if(victim.isOnline()) victim.getPlayer().sendMessage(ChatColor.RED + player.getName() + " har smidt dig ud af banden: " + getName());
     }
 
     public boolean addMember(OfflinePlayer player, int permissionLevel) {
@@ -136,11 +234,6 @@ public class Bande {
 
 
     public static Bande getBande(OfflinePlayer player) {
-        BandePlugin.instance.bander.stream().forEach(x -> {
-            x.members().keySet().forEach(a -> {
-                System.out.println("Checking member " + a.getName());
-            });
-        });
         return BandePlugin.instance.bander.stream().filter(x -> x.members().containsKey(player)).findFirst().orElse(null);
     }
 
@@ -167,7 +260,36 @@ public class Bande {
         return toReturn;
     }
 
+    public String[] genererateLines() {
+        List<Requirement> list = Arrays.asList(requirement1(), requirement2(), requirement3()).stream().sorted(Comparator.comparingDouble(x -> x.requirement.priority())).collect(Collectors.toList());
 
+        String[] requiremetntsAsString = new String[] {
+                list.get(0).requirement.getSuffix(),
+                list.get(1).requirement.getSuffix(),
+                list.get(2).requirement.getSuffix()
+        };
+
+        int[] amountForRequirements = new int[] {
+                list.get(0).amount,
+                list.get(1).amount,
+                list.get(2).amount
+        };
+
+        long[] currentAmountForRequirements = new long[] {
+                list.get(0).currentAmount(this),
+                list.get(1).currentAmount(this),
+                list.get(2).currentAmount(this)
+        };
+
+        ArrayList<String> toReturn = new ArrayList<>();
+
+        for(int i = 0; i <= 2; i++){
+            String req = "&c"+currentAmountForRequirements[i];
+            if(currentAmountForRequirements[i] >= amountForRequirements[i]) req = "&a"+amountForRequirements[i];
+            toReturn.add(ChatColor.translateAlternateColorCodes('&', "&8\u2B24 &f&n"+amountForRequirements[i]+"&r&f "+requiremetntsAsString[i]+"&8 \u3010 "+req+" / "+amountForRequirements[i]+" &8\u3011"));
+        }
+        return toReturn.toArray(new String[0]);
+    }
 
     public int getKills() {
         return kills;
@@ -268,5 +390,146 @@ public class Bande {
         public static int RIGHTHANDMAN = 3;
         public static int PUSHER = 2;
         public static int ROOKIE = 1;
+    }
+
+    public static class Requirement {
+        private LevelUpRequirement requirement;
+        private int amount;
+
+        public Requirement(LevelUpRequirement requirement, int amount) {
+            this.requirement = requirement;
+            this.amount = amount;
+        }
+
+        public boolean meetsRequirements(Bande bande) {
+            return currentAmount(bande) >= amount;
+        }
+
+        public long currentAmount(Bande bande) {
+            switch (requirement) {
+                case RIVALS:
+                    return bande.getRivals().size();
+                case ALLIES:
+                    return bande.getAllies().size();
+                case KILLS:
+                    return bande.getKills();
+                case VAGTKILLS:
+                    return bande.vagtKills;
+                case OFFIKILLS:
+                    return bande.offiKills;
+                case INSKILLS:
+                    return bande.insKills;
+                case DIRKILLS:
+                    return bande.dirKills;
+                case BANK:
+                    return bande.bank;
+                case MEMBERS:
+                    return bande.members().size();
+                default:
+                    return 0;
+            }
+        }
+
+        public void subtractIfMoneyRequirement(Bande bande) {
+            if(requirement.equals(LevelUpRequirement.BANK)) bande.withdraw(null, amount, false);
+        }
+
+        //
+
+        public enum LevelUpRequirement {
+            BANK{
+                @Override
+                public String getSuffix() {
+                    return "i bande banken";
+                }
+                @Override
+                public int priority() {
+                    return 0;
+                }
+            },
+            MEMBERS{
+                @Override
+                public String getSuffix() {
+                    return "medlemmer i banden";
+                }
+                @Override
+                public int priority() {
+                    return 1;
+                }
+            },
+            ALLIES{
+                @Override
+                public String getSuffix() {
+                    return "allierede";
+                }
+                @Override
+                public int priority() {
+                    return 2;
+                }
+            },
+            RIVALS{
+                @Override
+                public String getSuffix() {
+                    return "rivaler";
+                }
+                @Override
+                public int priority() {
+                    return 3;
+                }
+            },
+            KILLS{
+                @Override
+                public String getSuffix() {
+                    return "kills";
+                }
+                @Override
+                public int priority() {
+                    return 4;
+                }
+            },
+            VAGTKILLS{
+                @Override
+                public String getSuffix() {
+                    return "vagt kills";
+                }
+                @Override
+                public int priority() {
+                    return 4;
+                }
+            },
+            OFFIKILLS{
+                @Override
+                public String getSuffix() {
+                    return "officer kills";
+                }
+                @Override
+                public int priority() {
+                    return 5;
+                }
+            },
+            INSKILLS{
+                @Override
+                public String getSuffix() {
+                    return "inspekt\u00f8r kills";
+                }
+                @Override
+                public int priority() {
+                    return 6;
+                }
+            },
+            DIRKILLS{
+                @Override
+                public String getSuffix() {
+                    return "direkt\u00f8r kills";
+                }
+                @Override
+                public int priority() {
+                    return 7;
+                }
+            };
+
+            abstract String getSuffix();
+            abstract int priority();
+        }
     }
 }
