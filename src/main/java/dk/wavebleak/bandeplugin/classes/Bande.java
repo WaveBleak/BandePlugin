@@ -4,10 +4,7 @@ import dk.wavebleak.bandeplugin.BandePlugin;
 import dk.wavebleak.bandeplugin.utils.ColorUtil;
 import dk.wavebleak.bandeplugin.utils.InstantFirework;
 import dk.wavebleak.bandeplugin.utils.ItemsUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -73,7 +70,7 @@ public class Bande {
     public ItemStack getDisplaySkull() {
         ItemStack skull = ItemsUtil.getSkull(owner());
 
-        return ItemsUtil.setNameAndLore(skull, "&b" + getName(), "&bEjet af: &f" + owner().getName(), "&bLevel: &f" + getLevel(), "&bVagt Kills: " + getVagtKills());
+        return ItemsUtil.setNameAndLore(skull, "&c&l" + getName(), "&fEjet af: &7" + owner().getName(), "&fLevel: &7" + getLevel(), "&fVagt Kills: &7" + getVagtKills());
     }
 
     public void levelUp(boolean verbose) {

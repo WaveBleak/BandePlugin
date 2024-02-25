@@ -33,12 +33,12 @@ public class BandeCommand implements CommandExecutor {
 
         if(strings.length == 1 && strings[0].equalsIgnoreCase("load") && player.isOp()) {
             BandePlugin.instance.load();
-            player.sendMessage(ChatColor.GREEN + "Bande pluginnet er nu loadet fra databasen!");
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fBande pluginnet er nu loaded fra databasen!"));
             return true;
         }
         if(strings.length == 1 && strings[0].equalsIgnoreCase("save") && player.isOp()) {
             BandePlugin.instance.save();
-            player.sendMessage(ChatColor.GREEN + "Bande pluginnet er nu gemt til databasen!");
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fBande pluginnet er nu gemt til databasen!"));
             return true;
         }
 
@@ -55,14 +55,52 @@ public class BandeCommand implements CommandExecutor {
         InventoryUtil.createBorders(inventory);
         if(bande == null) { // Ingen bande
 
-            inventory.setItem(20, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTg3MDMxYzQ3MjZkZGVkZDY1YjZhMTFkMzE0N2U2NzI0ZGVmYmIyOTBkYTI5Y2JiNzlkYTI0OTA1NDZjYmYifX19"), "&c&lTOP LEVEL", "&fplease make a leaderboard!", "&ffor top level","&fpookie wookie bear"));
+            inventory.setItem(20, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTg3MDMxYzQ3MjZkZGVkZDY1YjZhMTFkMzE0N2U2NzI0ZGVmYmIyOTBkYTI5Y2JiNzlkYTI0OTA1NDZjYmYifX19"), "&c&lTOP LEVEL", "&fplease make a leaderboard", "&ffor top level","&fpookie wookie bear :3"));
             inventory.setItem(22, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmQwZjQwNjFiZmI3NjdhN2Y5MjJhNmNhNzE3NmY3YTliMjA3MDliZDA1MTI2OTZiZWIxNWVhNmZhOThjYTU1YyJ9fX0="), "&4&lOpret en bande", "&8\u2B24 &fDet koster &c$5000 &fat oprette en bande!"));
-            inventory.setItem(24, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDJhMzA0OGY1M2IyNGZiMzZlYmFjNjRkODU4Mzg5MTM1ODgzZjI1ODc0ZTQ1NDZkMWZjZDg5YzMwYmQ2ZjY1NiJ9fX0="), "&c&lDINE INVITATIONER", "&8\u2B24 &fKlik her for at", "&8 &8 &8 &fse dine invitationer"));
+            inventory.setItem(24, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDJhMzA0OGY1M2IyNGZiMzZlYmFjNjRkODU4Mzg5MTM1ODgzZjI1ODc0ZTQ1NDZkMWZjZDg5YzMwYmQ2ZjY1NiJ9fX0="), "&c&lDINE INVITATIONER", "&8\u2B24 &fKlik her for at se dine invitationer!"));
 
-        } else { // Har en bande
+        } else { // Har en bande &8( &4&lBANDE &8) &f
+            //TODO: Add player manager for highups (3+)
+            //TODO: Upgrades shop
+            //TODO: Bank
+            //TODO: Levelup Button
+            //TODO: Allierede
+            //TODO: Rivaler
+            //TODO: Leaderboard
 
             inventory.setItem(4, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
 
+            String levelupHead = "";
+            String levelupColor = "";
+            if(bande.canLevelUp()) {
+                levelupHead = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWRhMDI3NDc3MTk3YzZmZDdhZDMzMDE0NTQ2ZGUzOTJiNGE1MWM2MzRlYTY4YzhiN2JjYzAxMzFjODNlM2YifX19";
+                levelupColor = "&a";
+                ArrayList<String> lore = new ArrayList<>();
+                lore.add("&8"+bande.getLevel()+" &8&l\u00BB &7"+(bande.getLevel()+1));
+                lore.add(" ");
+                lore.add("&f&lKRAV:");
+                lore.addAll(Arrays.asList(bande.genererateLines()));
+                lore.add(" ");
+                lore.add("&8&l\u3014 &f&lKLIK HER &8&l\u3015");
+                inventory.setItem(13, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(levelupHead), levelupColor + "&lLEVELUP", lore.toArray(new String[0])));
+            }else{
+                levelupHead = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmQ5Mjg3NjE2MzQzZDgzM2U5ZTczMTcxNTljYWEyY2IzZTU5NzQ1MTEzOTYyYzEzNzkwNTJjZTQ3ODg4NGZhIn19fQ==";
+                levelupColor = "&c";
+                ArrayList<String> lore = new ArrayList<>();
+                lore.add("&8"+bande.getLevel()+" &8&l\u00BB &7"+(bande.getLevel()+1));
+                lore.add(" ");
+                lore.add("&f&lKRAV:");
+                lore.addAll(Arrays.asList(bande.genererateLines()));
+                lore.add(" ");
+                lore.add(" ");
+                lore.add("&8&l\u3014 &c&lI HAR IKKE OPN\u00C5ET ALLE KRAV &8&l\u3015");
+                inventory.setItem(13, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(levelupHead), levelupColor + "&lLEVELUP", lore.toArray(new String[0])));
+                }
+
+            inventory.setItem(19, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
+            inventory.setItem(21, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
+            inventory.setItem(23, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
+            inventory.setItem(25, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&l" + bande.getName(), "&bLevel: &f" + bande.getLevel(), "&bKDR: &f" + bande.getKDR()));
 
         }
 
