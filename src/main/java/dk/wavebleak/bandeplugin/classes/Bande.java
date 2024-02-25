@@ -266,7 +266,7 @@ public class Bande {
     }
 
 
-    public static enum PermissionLevel {
+    public enum PermissionLevel {
         KINGPIN(4),
         RIGHTHANDMAN(3),
         PUSHER(2),
