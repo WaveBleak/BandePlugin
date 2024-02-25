@@ -1,0 +1,6 @@
+name: BandePlugin
+version: '1.0'
+main: dk.wavebleak.bandeplugin.BandePlugin
+commands:
+  bande:
+    aliases: b
