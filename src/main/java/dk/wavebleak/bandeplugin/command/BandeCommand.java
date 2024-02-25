@@ -131,7 +131,7 @@ public class BandeCommand implements CommandExecutor {
 
         HashMap<OfflinePlayer, Integer> map = new HashMap<>();
 
-        map.put(player, Bande.PermissionLevel.KINGPIN.getValue());
+        map.put(player, Bande.PermissionLevel.KINGPIN);
 
         BandePlugin.instance.bander.add(new Bande(map, player, Collections.emptyList(), Collections.emptyList(), 1, 0, 0, 0, 0, 0, 0, 0, name));
         player.sendMessage(ChatColor.GREEN + "Du lavede banden: " + name + "!");
@@ -164,7 +164,7 @@ public class BandeCommand implements CommandExecutor {
             switch(event.getAction()) {
                 case PICKUP_ALL: // LEFT CLICK
                     player.closeInventory();
-                    if(!clickedBande.addMember(player, Bande.PermissionLevel.ROOKIE.getValue())) {
+                    if(!clickedBande.addMember(player, Bande.PermissionLevel.ROOKIE)) {
                         player.sendMessage(ChatColor.RED + "Denne bande er fuld!");
                     } else {
                         BandePlugin.invites.remove(player);

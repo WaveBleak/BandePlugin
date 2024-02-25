@@ -64,8 +64,8 @@ public class Manager {
                     OfflinePlayer player2 = Bukkit.getOfflinePlayer(UUID.fromString("f6c6dd6c-5c9f-44a0-8150-41027ed74722"));
                     HashMap<OfflinePlayer, Integer> map1 = new HashMap<>();
                     HashMap<OfflinePlayer, Integer> map2 = new HashMap<>();
-                    map1.put(player1, Bande.PermissionLevel.KINGPIN.getValue());
-                    map2.put(player2, Bande.PermissionLevel.KINGPIN.getValue());
+                    map1.put(player1, Bande.PermissionLevel.KINGPIN);
+                    map2.put(player2, Bande.PermissionLevel.KINGPIN);
                     teams.add(new Bande(map1, player1, new ArrayList<>(), new ArrayList<>(), 1, 0, 0, 0, 0, 0, 0, 0, "TestBande1"));
                     teams.add(new Bande(map2, player2, new ArrayList<>(), new ArrayList<>(), 1, 0, 0, 0, 0, 0, 0, 0, "TestBande2"));
                     saveData(teams);

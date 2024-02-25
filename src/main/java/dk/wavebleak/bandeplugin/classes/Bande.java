@@ -266,19 +266,10 @@ public class Bande {
     }
 
 
-    public enum PermissionLevel {
-        KINGPIN(4),
-        RIGHTHANDMAN(3),
-        PUSHER(2),
-        ROOKIE(1);
-
-        private final int value;
-        PermissionLevel(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
+    public static class PermissionLevel {
+        public static int KINGPIN = 4;
+        public static int RIGHTHANDMAN = 3;
+        public static int PUSHER = 2;
+        public static int ROOKIE = 1;
     }
 }
