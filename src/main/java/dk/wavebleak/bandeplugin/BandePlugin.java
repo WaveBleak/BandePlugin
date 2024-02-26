@@ -10,12 +10,16 @@ import dk.wavebleak.bandeplugin.events.PlayerHitPlayerEvent;
 import dk.wavebleak.bandeplugin.utils.Manager;
 import net.milkbowl.vault.economy.Economy;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
+
+import static dk.wavebleak.bandeplugin.utils.GithubUtils.checkVersion;
 
 public final class BandePlugin extends JavaPlugin {
 
@@ -27,7 +31,7 @@ public final class BandePlugin extends JavaPlugin {
     public static HashMap<Player, InventoryData> inventoryManager = new HashMap<>();
 
     public static String[] bannedNames = {
-            "HeJ"
+            "HeJ" //TODO: Add slurs
     };
 
     @Override
@@ -49,6 +53,14 @@ public final class BandePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerHitPlayerEvent(), this);
 
         getCommand("bande").setExecutor(new BandeCommand());
+
+        if(!checkVersion()) {
+            getLogger().warning("FOR\u00C6LDET VERSION AF BANDE, DISABLER PLUGINNET");
+            getLogger().warning("ADD \"wavebleak\" P\u00C5 DISCORD FOR AT FIXE DET");
+            getLogger().warning("FOR\u00C6LDET VERSION AF BANDE, DISABLER PLUGINNET");
+            Bukkit.broadcastMessage(ChatColor.RED + "FOR\u00C6LDET VERSION AF BANDE, DISABLER PLUGINNET, ADD \"wavebleak\" P\u00C5 DISCORD FOR AT FIXE DET"); //TODO: Make this pretti
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
     }
 
     public void setupEconomy() {

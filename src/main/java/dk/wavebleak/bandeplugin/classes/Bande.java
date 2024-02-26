@@ -17,7 +17,7 @@ public class Bande {
     private final HashMap<String, Integer> membersUUID;
     private List<String> rivals;
     private List<String> allies;
-    private final String ownerUUID;
+    private String ownerUUID;
     private int level;
     private int kills;
     private int vagtKills;
@@ -27,9 +27,11 @@ public class Bande {
     private int deaths;
     private long bank;
     private String name;
+    private boolean unlockedTerritory;
+    private boolean unlockedHouse;
 
 
-    public Bande(HashMap<OfflinePlayer, Integer> members, OfflinePlayer owner, List<String> rivals, List<String> allies, int level, int kills, int vagtKills, int offiKills, int insKills, int dirKills, int deaths, long bank, String name) {
+    public Bande(HashMap<OfflinePlayer, Integer> members, OfflinePlayer owner, List<String> rivals, List<String> allies, int level, int kills, int vagtKills, int offiKills, int insKills, int dirKills, int deaths, long bank, String name, boolean unlockedTerritory, boolean unlockedHouse) {
         this.membersUUID = new HashMap<>();
         for (OfflinePlayer player : members.keySet()) {
             this.membersUUID.put(player.getUniqueId().toString(), members.get(player));
@@ -46,11 +48,13 @@ public class Bande {
         this.deaths = deaths;
         this.bank = bank;
         this.name = name;
+        this.unlockedTerritory = unlockedTerritory;
+        this.unlockedHouse = unlockedHouse;
 
         this.bandeID = UUID.randomUUID().toString();
     }
 
-    public Bande(HashMap<String, Integer> membersUUID, List<String> rivals, List<String> allies, String ownerUUID, int level, int kills, int vagtKills, int offiKills, int insKills, int dirKills, int deaths, long bank, String name) {
+    public Bande(HashMap<String, Integer> membersUUID, List<String> rivals, List<String> allies, String ownerUUID, int level, int kills, int vagtKills, int offiKills, int insKills, int dirKills, int deaths, long bank, String name, boolean unlockedTerritory, boolean unlockedHouse) {
         this.membersUUID = membersUUID;
         this.rivals = rivals;
         this.allies = allies;
@@ -64,6 +68,8 @@ public class Bande {
         this.deaths = deaths;
         this.bank = bank;
         this.name = name;
+        this.unlockedTerritory = unlockedTerritory;
+        this.unlockedHouse = unlockedHouse;
 
         this.bandeID = UUID.randomUUID().toString();
     }
@@ -72,10 +78,31 @@ public class Bande {
         return 5;
     }
 
+
+    public void transferOwner(OfflinePlayer newOwner) {
+        OfflinePlayer previousOwner = owner();
+        this.ownerUUID = newOwner.getUniqueId().toString();
+
+        membersUUID.put(newOwner.getUniqueId().toString(), PermissionLevel.KINGPIN);
+        membersUUID.put(previousOwner.getUniqueId().toString(), PermissionLevel.RIGHTHANDMAN);
+
+        for(OfflinePlayer member : members().keySet()) {
+            if(member.equals(newOwner)) continue;
+            if(member.equals(previousOwner)) continue;
+            if(member.isOnline()) {
+                member.getPlayer().sendMessage(ChatColor.GREEN + previousOwner.getName() + " har givet ejerskab af banden til " + newOwner.getName() + "!"); //TODO: Add prefix osv
+            }
+        }
+
+        if(newOwner.isOnline()) newOwner.getPlayer().sendMessage(ChatColor.GREEN + previousOwner.getName() + " gav dig ejerskab af banden!"); //TODO: Add prefix osv
+        if(previousOwner.isOnline()) previousOwner.getPlayer().sendMessage(ChatColor.GREEN + "Du gav ejerskab af banden til " + newOwner.getName() + "!"); //TODO: Add prefix osv
+    }
+
+    //TODO: Bedre display skull
     public ItemStack getDisplaySkull() {
         ItemStack skull = ItemsUtil.getSkull(owner());
 
-        return ItemsUtil.setNameAndLore(skull, "&c&l" + getName(), "&fEjet af: &7" + owner().getName(), "&fLevel: &7" + getLevel(), "&fVagt Kills: &7" + getVagtKills());
+        return ItemsUtil.setNameAndLore(skull, "&c&l" + getName(), " ", "&8\u2B24 &fEjet af: &7" + owner().getName(), "&8\u2B24 &fLevel: &7" + getLevel(), "&8\u2B24 &fVagt Kills: &7" + getVagtKills(), "&8\u2B24 &fOfficer Kills: &7" + getOffiKills(), "&8\u2B24 &fInspekt\u00f8r Kills: &7" + getInsKills(), "&8\u2B24 &fDirekt\u00f8r Kills: " + getDirKills());
     }
 
     public Requirement requirement1() {
@@ -126,6 +153,10 @@ public class Bande {
 
     public boolean canLevelUp() {
         return requirement1().meetsRequirements(this) && requirement2().meetsRequirements(this) && requirement3().meetsRequirements(this);
+    }
+
+    public void setMemberRank(OfflinePlayer player, int newValue) {
+        membersUUID.put(player.getUniqueId().toString(), newValue);
     }
 
     public void levelUp(boolean verbose, boolean bypassRequirements) {
@@ -182,6 +213,21 @@ public class Bande {
         return true;
     }
 
+
+    //TODO: Bedre beskeder
+    public void invite(OfflinePlayer inviter, OfflinePlayer invitee) {
+        BandePlugin.invites.put(invitee, this);
+
+        if(invitee.isOnline()) invitee.getPlayer().sendMessage(ChatColor.GREEN + " Du er blevet inviteret til banden " + getName() + " af " + inviter.getName() + "!");
+        if(inviter.isOnline()) inviter.getPlayer().sendMessage(ChatColor.GREEN + " Du har nu inviteret " + invitee.getName() + " til banden!");
+        for(OfflinePlayer member : members().keySet()) {
+            if(member.equals(inviter)) continue;
+            if(member.isOnline()) {
+                member.getPlayer().sendMessage(ChatColor.GREEN + invitee.getName() + " er blevet inviteret til banden af " + inviter.getName() + "!");
+            }
+        }
+    }
+
     public void addKill() {
         kills++;
     }
@@ -210,6 +256,8 @@ public class Bande {
         return members().size();
     }
 
+
+    //TODO: Bedre beskeder
     public void kickMember(OfflinePlayer victim, OfflinePlayer player) {
         membersUUID.remove(victim.getUniqueId().toString());
 
@@ -221,6 +269,61 @@ public class Bande {
         }
         if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.GREEN + victim.getName() + " er nu smidt ud fra banden!");
         if(victim.isOnline()) victim.getPlayer().sendMessage(ChatColor.RED + player.getName() + " har smidt dig ud af banden: " + getName());
+        for(Map.Entry<Player, InventoryData> entry : BandePlugin.inventoryManager.entrySet()) {
+            if(entry.getKey().equals(victim)) {
+                if(victim.isOnline()) {
+                    if(victim.getPlayer().getOpenInventory().getTopInventory().equals(entry.getValue().getInventory())) {
+                        victim.getPlayer().closeInventory();
+                    }
+                }
+            }
+        }
+        BandePlugin.instance.save();
+    }
+
+    public void leave(OfflinePlayer player) {
+        membersUUID.remove(player.getUniqueId().toString());
+
+        for(OfflinePlayer member : members().keySet()) {
+            if(member.equals(player)) continue;
+            if(member.isOnline()) {
+                member.getPlayer().sendMessage(ChatColor.RED + player.getName() + " har forladt banden!"); //TODO: Bedre besked
+            }
+        }
+        for(Map.Entry<Player, InventoryData> entry : BandePlugin.inventoryManager.entrySet()) {
+            if(entry.getKey().equals(player)) {
+                if(player.isOnline()) {
+                    if(player.getPlayer().getOpenInventory().getTopInventory().equals(entry.getValue().getInventory())) {
+                        player.getPlayer().closeInventory();
+                    }
+                }
+            }
+        }
+        if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.GREEN + "Du har nu forladt banden " + getName()); //TODO: Bedre besked
+        BandePlugin.instance.save();
+    }
+
+    public void disband() {
+        for(OfflinePlayer member : members().keySet()) {
+            if(member.equals(owner())) continue;
+            if(member.isOnline()) {
+                member.getPlayer().sendMessage(ChatColor.RED + owner().getName() + " har opl\u00f8st banden!"); //TODO: Bedre besked
+            }
+            for(Map.Entry<Player, InventoryData> entry : BandePlugin.inventoryManager.entrySet()) {
+                if(entry.getKey().equals(member)) {
+                    if(member.isOnline()) {
+                        if(member.getPlayer().getOpenInventory().getTopInventory().equals(entry.getValue().getInventory())) {
+                            member.getPlayer().closeInventory();
+                        }
+                    }
+                }
+            }
+        }
+        if(owner().isOnline()) owner().getPlayer().sendMessage(ChatColor.GREEN + " du har nu opl\u00f8st banden!"); //TODO: Bedre besked
+
+        BandePlugin.instance.bander.remove(this);
+        BandePlugin.instance.save();
+
     }
 
     public boolean addMember(OfflinePlayer player, int permissionLevel) {
@@ -289,6 +392,29 @@ public class Bande {
             toReturn.add(ChatColor.translateAlternateColorCodes('&', "&8\u2B24 &f&n"+amountForRequirements[i]+"&r&f "+requiremetntsAsString[i]+"&8 \u3010 "+req+" / "+amountForRequirements[i]+" &8\u3011"));
         }
         return toReturn.toArray(new String[0]);
+    }
+
+    public int getMemberRank(OfflinePlayer member) {
+        Optional<Map.Entry<OfflinePlayer, Integer>> entry = members().entrySet().stream().filter(set -> set.getKey().equals(member)).findAny();
+
+        if(entry.isPresent()) return entry.get().getValue();
+
+        return 0;
+    }
+
+    public String getMemberRankString(OfflinePlayer player) {
+        switch (getMemberRank(player)) {
+            case 1:
+                return "Rookie";
+            case 2:
+                return "Pusher";
+            case 3:
+                return "Right hand man";
+            case 4:
+                return "Kingpin";
+            default:
+                return "FEJL";
+        }
     }
 
     public int getKills() {
@@ -382,6 +508,22 @@ public class Bande {
 
     public HashMap<String, Integer> getMembersUUID() {
         return membersUUID;
+    }
+
+    public boolean isUnlockedTerritory() {
+        return unlockedTerritory;
+    }
+
+    public void setUnlockedTerritory(boolean unlockedTerritory) {
+        this.unlockedTerritory = unlockedTerritory;
+    }
+
+    public boolean isUnlockedHouse() {
+        return unlockedHouse;
+    }
+
+    public void setUnlockedHouse(boolean unlockedHouse) {
+        this.unlockedHouse = unlockedHouse;
     }
 
 

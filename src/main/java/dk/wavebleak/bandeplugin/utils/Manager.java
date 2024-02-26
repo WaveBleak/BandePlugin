@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import dk.wavebleak.bandeplugin.BandePlugin;
 import dk.wavebleak.bandeplugin.classes.Bande;
+import dk.wavebleak.bandeplugin.classes.BandeBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -49,25 +50,24 @@ public class Manager {
                 jsonObject.addProperty("deaths", bande.getDeaths());
                 jsonObject.addProperty("bank", bande.getBank());
                 jsonObject.addProperty("name", bande.getName());
+                jsonObject.addProperty("unlockedTerritory", bande.isUnlockedTerritory());
+                jsonObject.addProperty("unlockedHouse", bande.isUnlockedHouse());
 
                 return jsonObject;
             }).create();
 
 
     public Manager() {
-        dbFile = new File(BandePlugin.instance.getDataFolder().toString() + "/Teams.json");
+        dbFile = new File(BandePlugin.instance.getDataFolder().toString() + "/Bander.json");
         if(!dbFile.exists()) {
             try {
                 if(dbFile.createNewFile()) {
                     List<Bande> teams = new ArrayList<>();
                     OfflinePlayer player1 = Bukkit.getOfflinePlayer(UUID.fromString("390f6268-c72e-4206-a8dc-4980cd655845"));
                     OfflinePlayer player2 = Bukkit.getOfflinePlayer(UUID.fromString("f6c6dd6c-5c9f-44a0-8150-41027ed74722"));
-                    HashMap<OfflinePlayer, Integer> map1 = new HashMap<>();
-                    HashMap<OfflinePlayer, Integer> map2 = new HashMap<>();
-                    map1.put(player1, Bande.PermissionLevel.KINGPIN);
-                    map2.put(player2, Bande.PermissionLevel.KINGPIN);
-                    teams.add(new Bande(map1, player1, new ArrayList<>(), new ArrayList<>(), 1, 0, 0, 0, 0, 0, 0, 0, "TestBande1"));
-                    teams.add(new Bande(map2, player2, new ArrayList<>(), new ArrayList<>(), 1, 0, 0, 0, 0, 0, 0, 0, "TestBande2"));
+                    teams.add(new BandeBuilder(player1).setName("TestBande1").create());
+                    teams.add(new BandeBuilder(player2).setName("TestBande2").create());
+
                     saveData(teams);
                 }
             }catch (IOException e) {

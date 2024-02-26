@@ -83,7 +83,7 @@ public class ItemsUtil {
 
 
 
-    public ItemStack addLore(ItemStack item, String... lines) {
+    public static ItemStack addLore(ItemStack item, String... lines) {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
 
