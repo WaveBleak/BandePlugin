@@ -52,7 +52,7 @@ public class BandeCommand implements CommandExecutor {
     public void openMainInventory(Player player) {
         Bande bande = Bande.getBande(player);
 
-        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" FORSIDE");
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" FORSIDE");
         InventoryUtil.createBorders(inventory);
         if(bande == null) { // Ingen bande
 
@@ -98,10 +98,10 @@ public class BandeCommand implements CommandExecutor {
                 inventory.setItem(13, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(levelupHead), levelupColor + "&lLEVELUP", lore.toArray(new String[0])));
             }
 
-            inventory.setItem(19, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzNjNmMyNTFiMjMzYmUxMzgxMjQ1ZmRkZDNkMjM5MTg1NWIyN2FmYzM3ZjBjMTdmNzRiY2Q1MmY4MDkyYWNlNCJ9fX0="), "&b&lBank"));
-            inventory.setItem(21, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzE4ZTA1MTI2M2JjNDE5ZjBhODBiZGNkMjkzN2YyMDkzNzI0MWRmMGRmNTMwMDM1NzEyZWEyYTcyZWQ5YjQ1NSJ9fX0="), "&b&lUpgrades"));
+            inventory.setItem(19, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTk4ZGY0MmY0NzdmMjEzZmY1ZTlkN2ZhNWE0Y2M0YTY5ZjIwZDljZWYyYjkwYzRhZTRmMjliZDE3Mjg3YjUifX19"), "&c&lBANK", " ", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
+            inventory.setItem(21, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTMzZmM5YTQ1YmUxM2NhNTdhNzhiMjE3NjJjNmUxMjYyZGFlNDExZjEzMDQ4Yjk2M2Q5NzJhMjllMDcwOTZhYiJ9fX0="), "&c&lOPGRADERINGER", " ", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
             //inventory.setItem(23, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(player), "&b&lMedlemmer"));
-            inventory.setItem(25, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDhmZDcxMjZjZDY3MGM3OTcxYTI4NTczNGVkZmRkODAyNTcyYTcyYTNmMDVlYTQxY2NkYTQ5NDNiYTM3MzQ3MSJ9fX0="), "&b&lRelationer"));
+            inventory.setItem(25, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjVjOTZjZjNlNWM2OTgwYzcxNGYyNzkxN2I2NDM5YjA1OTY1MmY0Y2MyMTRhZGQ3MGRjNzQwYzZjMWZlNzBmMSJ9fX0="), "&c&lRELATIONER", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fAllierede", "&8\u2B24 &fRivaler", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
 
 
 
@@ -166,14 +166,14 @@ public class BandeCommand implements CommandExecutor {
                         return;
                     }
                     List<OfflinePlayer> members = new ArrayList<>(bande.members().keySet());
-                    inventory.setItem(23, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(members.get(random.nextInt(members.size()))), "&b&lMedlemmer"));
+                    inventory.setItem(23, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(members.get(random.nextInt(members.size()))), "&c&lMEDLEMMER", " ", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
                 }
             }.runTaskTimer(BandePlugin.instance, 0, 20);
         }
     }
 
     public void showBankMenu(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" BANK");
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" BANK");
         InventoryUtil.createBorders(inventory);
 
         Bande bande = Bande.getBande(player);
@@ -198,7 +198,7 @@ public class BandeCommand implements CommandExecutor {
     }
 
     public void showUpgradesMenu(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" UPGRADES");
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" OPGRADERINGER");
         InventoryUtil.createBorders(inventory);
         Bande bande = Bande.getBande(player);
 
@@ -224,7 +224,7 @@ public class BandeCommand implements CommandExecutor {
     }
 
     public void showMemberManager(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" MEDLEMMER");
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" MEDLEMMER");
         InventoryUtil.createBorders(inventory);
         Bande bande = Bande.getBande(player);
 
@@ -290,7 +290,7 @@ public class BandeCommand implements CommandExecutor {
     }
 
     public void showRelationsMenu(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" RELATIONER");
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" RELATIONER");
         InventoryUtil.createBorders(inventory);
         Bande bande = Bande.getBande(player);
 
@@ -351,7 +351,7 @@ public class BandeCommand implements CommandExecutor {
         BandePlugin.manager.saveData(BandePlugin.instance.bander);
     }
     public void openInvitationsInventory(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+""+ChatColor.BOLD+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" INVITATIONER");
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" INVITATIONER");
         InventoryUtil.createBorders(inventory);
 
         int i = 9;
