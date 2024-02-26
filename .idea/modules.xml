@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/BandePlugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/BandePlugin.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GitHub.BandePlugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/GitHub.BandePlugin.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Intellij.BandePlugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Intellij.BandePlugin.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/dk.wavebleak.BandePlugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/dk.wavebleak.BandePlugin.main.iml" />
     </modules>

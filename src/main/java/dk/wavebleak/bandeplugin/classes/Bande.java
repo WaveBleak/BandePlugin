@@ -90,12 +90,12 @@ public class Bande {
             if(member.equals(newOwner)) continue;
             if(member.equals(previousOwner)) continue;
             if(member.isOnline()) {
-                member.getPlayer().sendMessage(ChatColor.GREEN + previousOwner.getName() + " har givet ejerskab af banden til " + newOwner.getName() + "!"); //TODO: Add prefix osv
+                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+previousOwner.getName()+"&f har overdraget ejerskabet af banden til &c"+newOwner.getName() + "&f!"));
             }
         }
 
-        if(newOwner.isOnline()) newOwner.getPlayer().sendMessage(ChatColor.GREEN + previousOwner.getName() + " gav dig ejerskab af banden!"); //TODO: Add prefix osv
-        if(previousOwner.isOnline()) previousOwner.getPlayer().sendMessage(ChatColor.GREEN + "Du gav ejerskab af banden til " + newOwner.getName() + "!"); //TODO: Add prefix osv
+        if(newOwner.isOnline()) newOwner.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+previousOwner.getName()+" &fhar overdraget dig ejerskabet af banden!"));
+        if(previousOwner.isOnline()) previousOwner.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu overgav ejerskabet af banden til &c"+newOwner.getName()+"&f!"));
     }
 
     //TODO: Bedre display skull
