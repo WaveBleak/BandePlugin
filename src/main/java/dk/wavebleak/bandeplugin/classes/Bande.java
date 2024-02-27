@@ -97,12 +97,10 @@ public class Bande {
         if(newOwner.isOnline()) newOwner.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+previousOwner.getName()+" &fhar overdraget dig ejerskabet af banden!"));
         if(previousOwner.isOnline()) previousOwner.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu overgav ejerskabet af banden til &c"+newOwner.getName()+"&f!"));
     }
-
-    //TODO: Bedre display skull
     public ItemStack getDisplaySkull() {
         ItemStack skull = ItemsUtil.getSkull(owner());
 
-        return ItemsUtil.setNameAndLore(skull, "&c&l" + getName(), " ", "&8\u2B24 &fEjet af: &7" + owner().getName(), "&8\u2B24 &fLevel: &7" + getLevel(), "&8\u2B24 &fVagt Kills: &7" + getVagtKills(), "&8\u2B24 &fOfficer Kills: &7" + getOffiKills(), "&8\u2B24 &fInspekt\u00f8r Kills: &7" + getInsKills(), "&8\u2B24 &fDirekt\u00f8r Kills: " + getDirKills());
+        return ItemsUtil.setNameAndLore(skull, "&c&l" + getName(), " ", "&8\u2B24 &fEjer: &7" + owner().getName(), "&8\u2B24 &fLevel: &7" + getLevel(), "&8\u2B24 &fVagt Kills: &7" + getVagtKills(), "&8\u2B24 &fOfficer Kills: &7" + getOffiKills(), "&8\u2B24 &fInspekt\u00f8r Kills: &7" + getInsKills(), "&8\u2B24 &fDirekt\u00f8r Kills: " + getDirKills());
     }
 
     public Requirement requirement1() {
@@ -214,16 +212,15 @@ public class Bande {
     }
 
 
-    //TODO: Bedre beskeder
     public void invite(OfflinePlayer inviter, OfflinePlayer invitee) {
         BandePlugin.invites.put(invitee, this);
 
-        if(invitee.isOnline()) invitee.getPlayer().sendMessage(ChatColor.GREEN + " Du er blevet inviteret til banden " + getName() + " af " + inviter.getName() + "!");
-        if(inviter.isOnline()) inviter.getPlayer().sendMessage(ChatColor.GREEN + " Du har nu inviteret " + invitee.getName() + " til banden!");
+        if(invitee.isOnline()) invitee.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+inviter.getName()+" &fhar inviteret dig til banden &c"+getName()+"&f!"));
+        if(inviter.isOnline()) inviter.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har inviteret &c"+invitee.getName()+" &ftil banden!"));
         for(OfflinePlayer member : members().keySet()) {
             if(member.equals(inviter)) continue;
             if(member.isOnline()) {
-                member.getPlayer().sendMessage(ChatColor.GREEN + invitee.getName() + " er blevet inviteret til banden af " + inviter.getName() + "!");
+                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+inviter.getName()+" &fhar inviteret &c"+invitee.getName()+"&f til banden!"));
             }
         }
     }
@@ -257,18 +254,17 @@ public class Bande {
     }
 
 
-    //TODO: Bedre beskeder
     public void kickMember(OfflinePlayer victim, OfflinePlayer player) {
         membersUUID.remove(victim.getUniqueId().toString());
 
         for(OfflinePlayer member : members().keySet()) {
             if(member.equals(player)) continue;
             if(member.isOnline()) {
-                member.getPlayer().sendMessage(ChatColor.RED + player.getName() + " har kicket " + victim.getName() + " fra banden!");
+                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+player.getName()+" &fhar smidt &c"+victim.getName()+"&f ud fra banden!"));
             }
         }
-        if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.GREEN + victim.getName() + " er nu smidt ud fra banden!");
-        if(victim.isOnline()) victim.getPlayer().sendMessage(ChatColor.RED + player.getName() + " har smidt dig ud af banden: " + getName());
+        if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &Du har smidt &c"+victim.getName()+"&f ud fra banden!"));
+        if(victim.isOnline()) victim.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu er blevet smidt ud fra banden &c"+getName()+"&f af &c"+player.getName()+"&f!"));
         for(Map.Entry<Player, InventoryData> entry : BandePlugin.inventoryManager.entrySet()) {
             if(entry.getKey().equals(victim)) {
                 if(victim.isOnline()) {
@@ -287,7 +283,7 @@ public class Bande {
         for(OfflinePlayer member : members().keySet()) {
             if(member.equals(player)) continue;
             if(member.isOnline()) {
-                member.getPlayer().sendMessage(ChatColor.RED + player.getName() + " har forladt banden!"); //TODO: Bedre besked
+                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+player.getName()+" &fhar forladt banden!"));
             }
         }
         for(Map.Entry<Player, InventoryData> entry : BandePlugin.inventoryManager.entrySet()) {
@@ -299,7 +295,7 @@ public class Bande {
                 }
             }
         }
-        if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.GREEN + "Du har nu forladt banden " + getName()); //TODO: Bedre besked
+        if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har forladt banden"+getName()+"&f!"));
         BandePlugin.instance.save();
     }
 
@@ -307,7 +303,7 @@ public class Bande {
         for(OfflinePlayer member : members().keySet()) {
             if(member.equals(owner())) continue;
             if(member.isOnline()) {
-                member.getPlayer().sendMessage(ChatColor.RED + owner().getName() + " har opl\u00f8st banden!"); //TODO: Bedre besked
+                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+ owner().getName()+"&f har opl\u00F8st banden!"));
             }
             for(Map.Entry<Player, InventoryData> entry : BandePlugin.inventoryManager.entrySet()) {
                 if(entry.getKey().equals(member)) {
@@ -319,7 +315,7 @@ public class Bande {
                 }
             }
         }
-        if(owner().isOnline()) owner().getPlayer().sendMessage(ChatColor.GREEN + " du har nu opl\u00f8st banden!"); //TODO: Bedre besked
+        if(owner().isOnline()) owner().getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har opl\u00F8st banden!"));
 
         BandePlugin.instance.bander.remove(this);
         BandePlugin.instance.save();

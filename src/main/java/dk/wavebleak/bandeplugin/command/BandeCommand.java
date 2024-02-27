@@ -99,25 +99,23 @@ public class BandeCommand implements CommandExecutor {
 
             inventory.setItem(25, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjVjOTZjZjNlNWM2OTgwYzcxNGYyNzkxN2I2NDM5YjA1OTY1MmY0Y2MyMTRhZGQ3MGRjNzQwYzZjMWZlNzBmMSJ9fX0="), "&c&lRELATIONER", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fAllierede", "&8\u2B24 &fRivaler", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
 
-            //TODO: Bedre invite button
             List<String> inviteLore;
             if(bande.getMemberRank(player) >= Bande.PermissionLevel.RIGHTHANDMAN) {
-                inviteLore = Arrays.asList(" ", "&f&lHer kan du invitere medlemmer", " ", "&8&l\u3014 &f&lTRYK HER &8&l \u3015");
+                inviteLore = Arrays.asList(" ", "&f&lHer kan du:", "&8\u2B24 &fInvitere medlemmer", " ", "&8&l\u3014 &f&lTRYK HER &8&l \u3015");
             }else {
-                inviteLore = Arrays.asList(" ", "&c&lDu har ikke adgang", "&c&lTil at invitere medlemmer!");
+                inviteLore = Arrays.asList(" ", "&c&lDu har ikke adgang!");
             }
 
-            inventory.setItem(31, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGFjYmJjYTU2NzM3MmE5YjJiMzZjOGY2ODE1NDg1MWJkYTVlZTFkNTNlMmJjMjA4YTExNTJkOWExOGQyY2IifX19"), "&c&lInvit\u00E9r Spillere", inviteLore.toArray(new String[0])));
+            inventory.setItem(31, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2ZhM2Y2ZjlmNTBhYzY3ZGI5OGI2OGExNWZkMDU5MDE1Mjg4MzZhMThjNzBmYjM5MmFhODlmNGI2MDgzNzY2YiJ9fX0="), "&c&lInvit\u00E9r Spillere", inviteLore.toArray(new String[0])));
 
-            //TODO: Bedre forlad button
             String leaveName;
             List<String> leaveLore;
             if(bande.owner().equals(player)) {
                 leaveName = "&c&lOPL\u00d8S BANDE";
-                leaveLore = Arrays.asList(" ", "&c&lOpl\u00f8s bande", " ", "&8&l\u3014 &f&lSHIFT-TRYK HER FOR AT OPL\u00d8SE BANDEN&8&l \u3015");
+                leaveLore = Arrays.asList(" ", "&fOpl\u00f8s bande", " ", "&8&l\u3014 &f&lSHIFT + TRYK HER &8&l\u3015");
             } else {
                 leaveName = "&c&lFORLAD BANDE";
-                leaveLore = Arrays.asList(" ", "&8&l\u3014 &f&lSHIFT-TRYK HER FOR AT FORLADE BANDEN&8&l \u3015");
+                leaveLore = Arrays.asList(" ", "&fForlad bande", " ", "&8&l\u3014 &f&lSHIFT + TRYK HER &8&l\u3015");
             }
 
             inventory.setItem(40, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkMWFiYTczZjYzOWY0YmM0MmJkNDgxOTZjNzE1MTk3YmUyNzEyYzNiOTYyYzk3ZWJmOWU5ZWQ4ZWZhMDI1In19fQ=="), leaveName, leaveLore.toArray(new String[0])));
@@ -166,7 +164,7 @@ public class BandeCommand implements CommandExecutor {
                                 if(result) {
                                     bande.disband();
                                 } else {
-                                    if(player.isOnline()) player.sendMessage(ChatColor.RED + "Du skiftede mening"); //TODO: Add prefix osv
+                                    if(player.isOnline()) player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu skiftede mening! Banden er stadig intakt!"));
                                 }
                             });
                             break;
@@ -294,15 +292,15 @@ public class BandeCommand implements CommandExecutor {
 
             ItemStack memberSkull = ItemsUtil.getSkull(offlinePlayer);
 
-            ItemsUtil.setNameAndLore(memberSkull, title, "&fBalance: " + economy.getBalance(offlinePlayer), "&fRank: " + bande.getMemberRankString(offlinePlayer)); //TODO: Mere information
+            ItemsUtil.setNameAndLore(memberSkull, title, "&fRank: " + bande.getMemberRankString(offlinePlayer), "&lSaldo: " + economy.getBalance(offlinePlayer));
 
             if(bande.getMemberRank(player) >= Bande.PermissionLevel.RIGHTHANDMAN) {
                 if(offlinePlayer.equals(player)) {
-                    ItemsUtil.addLore(memberSkull, " ", "&cDu kan ikke manage dig selv!"); //TODO: Bedre lore
+                    ItemsUtil.addLore(memberSkull, " ", "&cDu kan ikke ændre på dig selv!");
                 } else {
-                    ItemsUtil.addLore(memberSkull, " ", "&8&l\u3014 &f&lVENSTRE KLIK FOR AT FORFREMME &8&l \u3015", "&8&l\u3014 &f&lH\u00d8JRE KLIK FOR AT DEGRADERE &8&l \u3015", "&8&l\u3014 &f&lDROP FOR AT SMIDE UD &8&l \u3015"); //TODO: Bedre lore
+                    ItemsUtil.addLore(memberSkull, " ", "&8&l\u3014 &f&lVENSTRE KLIK FOR AT FORFREMME &8&l \u3015", "&8&l\u3014 &f&lH\u00d8JRE KLIK FOR AT NEDGRADERE &8&l \u3015", "&8&l\u3014 &f&lDROP FOR AT SMIDE UD &8&l \u3015");
                     if(bande.owner().equals(player)) {
-                        ItemsUtil.addLore(memberSkull, "&8&l\u3014 &f&lMIDDLE CLICK FOR AT TRANSFER OWNERSHIP &8&l \u3015");
+                        ItemsUtil.addLore(memberSkull, "&fOverf\u00F8r ejerskab!", "&8&l\u3014 &f&lTRYK PÅ MUSEHJULET&8&l \u3015");
                     }
                 }
             }
@@ -353,7 +351,7 @@ public class BandeCommand implements CommandExecutor {
                                             bande.transferOwner(victim);
                                         } else {
                                             if(player.isOnline()) {
-                                                player.sendMessage(ChatColor.GREEN + "Du forblev bande ejer"); //TODO: Bro idfk hvad jeg skal skrive her
+                                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu forblev ejer!"));
                                             }
                                         }
                                     });
@@ -376,7 +374,7 @@ public class BandeCommand implements CommandExecutor {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         AnvilGUI.Builder builder = new AnvilGUI.Builder();
         builder.plugin(BandePlugin.instance);
-        builder.text("Er du sikker?"); //TODO: Måske add farve eller noget, idk (Husk beskeden kan ikke være så lang)
+        builder.text("Sikker? Ja/Nej");
         builder.preventClose();
         builder.onClick((slot, stateSnapshot) -> {
             if(slot != AnvilGUI.Slot.OUTPUT) return Collections.emptyList();
@@ -526,26 +524,26 @@ public class BandeCommand implements CommandExecutor {
                 case PICKUP_ALL: // LEFT CLICK
                     player.closeInventory();
                     if(!clickedBande.addMember(player, Bande.PermissionLevel.ROOKIE)) {
-                        player.sendMessage(ChatColor.RED + "Denne bande er fuld!"); //TODO: Bedre beskeder
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fBanden er fuld!"));
                     } else {
                         BandePlugin.invites.remove(player);
-                        player.sendMessage(ChatColor.GREEN + "Du joinede banden: " + clickedBande.getName());//TODO: Bedre beskeder
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu sluttede dig til banden &c"+clickedBande.getName()+"&f!"));
                         for(OfflinePlayer member : clickedBande.members().keySet()) {
                             if(member.equals(player)) continue;
                             if(member.isOnline()) {
-                                member.getPlayer().sendMessage(ChatColor.GREEN + player.getName() + " joinede banden!");//TODO: Bedre beskeder
+                                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+player.getName()+" &fhar sluttet sig til banden!"));
                             }
                         }
                     }
                     break;
                 case PICKUP_HALF: // RIGHT CLICK
                     player.closeInventory();
-                    player.sendMessage(ChatColor.RED + "Du har afvist invitationen!");//TODO: Bedre beskeder
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har afvist invitationen til &c"+clickedBande.getName()+"&f!"));
                     BandePlugin.invites.remove(player);
                     for(OfflinePlayer member : clickedBande.members().keySet()) {
                         if(member.equals(player)) continue;
                         if(member.isOnline()) {
-                            member.getPlayer().sendMessage(ChatColor.RED + player.getName() + " afviste jeres invitation!");//TODO: Bedre beskeder
+                            member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+player.getName()+" &fhar afvist bandens invitation!"));
                         }
                     }
                     break;
