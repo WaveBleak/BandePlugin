@@ -29,11 +29,11 @@ public class Manager {
                 JsonArray rivals = new JsonArray();
                 JsonArray allies = new JsonArray();
 
-                for(String bandeUUID : bande.getRivals()) {
-                    rivals.add(new JsonPrimitive(bandeUUID));
+                for(Bande bandeUUID : bande.getRivals()) {
+                    rivals.add(new JsonPrimitive(bandeUUID.getBandeID()));
                 }
-                for(String bandeUUID : bande.getAllies()) {
-                    allies.add(new JsonPrimitive(bandeUUID));
+                for(Bande bandeUUID : bande.getAllies()) {
+                    allies.add(new JsonPrimitive(bandeUUID.getBandeID()));
                 }
 
                 jsonObject.addProperty("bandeID", bande.getBandeID());

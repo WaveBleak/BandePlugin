@@ -261,9 +261,51 @@ public class BandeCommand implements CommandExecutor {
         Bande bande = Bande.getBande(player);
 
         if(bande == null) return;
+
+        final int territoriePris = 30000;
+        final int husPris = 50000;
+
+        ChatColor territorieFarve;
+        ChatColor husFarve;
+        if (bande.getBank() >= territoriePris) {
+            territorieFarve = ChatColor.GREEN;
+        } else {
+            territorieFarve = ChatColor.RED;
+        }
+        if (bande.getBank() >= husPris) {
+            husFarve = ChatColor.GREEN;
+        } else {
+            husFarve = ChatColor.RED;
+        }
+
+        List<String> territorieLore = new ArrayList<>(Arrays.asList("&fMed territorier kan du eje et omr\u00E5de", "&fsom generere goder, der kan s\u00E6lges p\u00E5 det sorte marked", "&fmen andre bander kan angribe jer og stj\u00E6le jeres territorie!", ""));
+
+        if(bande.isUnlockedTerritory()) {
+            territorieLore.add("&a&lDin bande ejer allerrade dette");
+        } else {
+            territorieLore.add(territorieFarve + "$" + territoriePris);
+        }
+
+        List<String> husLore = new ArrayList<>(Arrays.asList("&fI bande huset f\u00E5r i en masse plads til at lave lige hvad i vil", "&fI kan gro planter eller have en masse storage", ""));
+        if(bande.isUnlockedHouse()) {
+            husLore.add("&a&lDin bande ejer allerrade dette");
+        } else {
+            husLore.add(husFarve + "$" + husPris);
+        }
+
+        if(bande.getMemberRank(player) >= Bande.PermissionLevel.PUSHER) {
+            husLore.add("&8&l\u3014 &f&lTRYK HER &8&l \u3015");
+            territorieLore.add("&8&l\u3014 &f&lTRYK HER &8&l \u3015");
+        } else {
+            husLore.add("&8&l\u3014 &f&lDin bande har ikke givet dig tilladelse til dette \u3015");
+            territorieLore.add("&8&l\u3014 &f&lDin bande har ikke givet dig tilladelse til dette \u3015");
+        }
+
+
         inventory.setItem(4, bande.getDisplaySkull());
         inventory.setItem(36, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
-
+        inventory.setItem(21, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzYxODQ2MTBjNTBjMmVmYjcyODViYzJkMjBmMzk0MzY0ZTgzNjdiYjMxNDg0MWMyMzhhNmE1MjFhMWVlMTJiZiJ9fX0="), "&c&lTerritorier", territorieLore.toArray(new String[0])));
+        inventory.setItem(23, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2RhZWEzZTEzYTUxM2RhMTA1MWVhNTlkMTdlZGZiMDNlOGQ4Mzg4ZWRlODg4ODg0NzZkZmI2OTNmMmM4Mzk4In19fQ=="), "&c&lHuse", husLore.toArray(new String[0])));
 
         player.openInventory(inventory);
 
@@ -272,6 +314,46 @@ public class BandeCommand implements CommandExecutor {
             switch (event.getSlot()) {
                 case 36:
                     openMainInventory(player);
+                    break;
+                case 21: //Territorie
+                    if(bande.isUnlockedTerritory()) return;
+
+                    if(bande.getBank() >= territoriePris) {
+                        bande.setUnlockedTerritory(true);
+                        bande.setBank(bande.getBank() - territoriePris);
+
+                        player.sendMessage("&8( &4&lBANDE &8) &fDu har k\u00f8bt adgang til bande territorier!");
+
+                        for(OfflinePlayer member : bande.members().keySet()) {
+                            if(member.equals(player)) continue;
+                            if(member.isOnline()) {
+                                member.getPlayer().playSound(player.getLocation(), Sound.NOTE_PLING, 1 ,1.5f);
+                                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &f" + player.getName() + " har k\u00f8bt adgang til bande territorier!"));
+                            }
+                        }
+
+                    }
+                    showUpgradesMenu(player);
+
+                    break;
+                case 23:
+                    if(bande.isUnlockedTerritory()) return;
+
+                    if(bande.getBank() >= husPris) {
+                        bande.setUnlockedTerritory(true);
+                        bande.setBank(bande.getBank() - husPris);
+
+                        player.sendMessage("&8( &4&lBANDE &8) &fDu har k\u00f8bt adgang til bande huse!");
+
+                        for(OfflinePlayer member : bande.members().keySet()) {
+                            if(member.equals(player)) continue;
+                            if(member.isOnline()) {
+                                member.getPlayer().playSound(player.getLocation(), Sound.NOTE_PLING, 1 ,1.5f);
+                                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &f" + player.getName() + " har k\u00f8bt adgang til bande huse!"));
+                            }
+                        }
+                    }
+                    showUpgradesMenu(player);
                     break;
             }
 
@@ -329,7 +411,6 @@ public class BandeCommand implements CommandExecutor {
         player.openInventory(inventory);
 
         InventoryManager lambda = (InventoryClickEvent event) -> {
-            Bukkit.broadcastMessage(event.getAction().name());
             if(event.getSlot() == 36) {
                 openMainInventory(player);
                 return;
@@ -468,8 +549,8 @@ public class BandeCommand implements CommandExecutor {
         if(bande == null) return;
         inventory.setItem(4, bande.getDisplaySkull());
         inventory.setItem(36, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
-
-
+        inventory.setItem(23, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTI0OWNlN2QyODI4NWY2NjlkNDQ5ZTIzOGQwMDkxMmU2OTQzNGYwZDc1OWVhZThlODI3ODkxZWNkYWEwZjMxNCJ9fX0="), "&c&lRivaler", "&fKlik her for at se dine rivaler", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
+        inventory.setItem(21, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjhlYjczZGFmOGY2YTZjZDU2NjliMjgzMmEyNDZkYmY3ZTNhMTMwN2JjYzE5YThjOTZlZjc3NGQ3NmM1NmJhOSJ9fX0="), "&c&lAllierede", "&fKlik her for at se dine allierede", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
         player.openInventory(inventory);
 
 
@@ -478,12 +559,154 @@ public class BandeCommand implements CommandExecutor {
                 case 36:
                     openMainInventory(player);
                     break;
+                case 21: //Allierede
+                    showAllies(player);
+                    break;
+                case 23:
+                    showRivals(player);
+                    break;
             }
 
         };
 
         inventoryManager.put(player, new InventoryData(lambda, inventory));
 
+    }
+
+    public void showAllies(Player player) {
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" ALLIEREDE");
+        InventoryUtil.createBorders(inventory);
+        Bande bande = Bande.getBande(player);
+
+        if(bande == null) return;
+        inventory.setItem(4, bande.getDisplaySkull());
+        inventory.setItem(36, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+
+        if(bande.getAllies().isEmpty()) {
+            inventory.setItem(10, ItemUtils.setNameAndLore(Material.BARRIER, "&c&lIngen allies!", "&fDu har ikke nogen allies endnu!"));
+        }
+
+        int i = 9;
+        HashMap<Integer, Bande> slotToAlly = new HashMap<>();
+        for(Bande ally : bande.getAllies()) {
+            if(i == 34) continue;
+            i++;
+            if(i == 16 || i == 25) i += 2;
+
+            slotToAlly.put(i, ally);
+
+            ItemStack skullToDisplay = ally.getDisplaySkull();
+
+            if(bande.getMemberRank(player) >= Bande.PermissionLevel.RIGHTHANDMAN) {
+                ItemUtils.addLore(skullToDisplay, " ", "&8&l\u3014 &f&lVENSTRE KLIK FOR AT FJERNE&8&l \u3015");
+            }
+
+
+
+            inventory.setItem(i, skullToDisplay);
+
+        }
+
+
+        player.openInventory(inventory);
+
+
+        InventoryManager lambda = (InventoryClickEvent event) -> {
+            if (event.getSlot() == 36) {
+                showRelationsMenu(player);
+                return;
+            }
+            if(event.getAction() != InventoryAction.PICKUP_ALL) return;
+
+            if(bande.getMemberRank(player) < Bande.PermissionLevel.RIGHTHANDMAN) return;
+
+            Bande targetAlly = slotToAlly.get(event.getSlot());
+
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har fjernet " + targetAlly.getName() + " fra dine allies!"));
+
+            for(OfflinePlayer member : bande.members().keySet()) {
+                if(member.isOnline()) {
+                    member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &f" + player.getName() + " har fjernet " + targetAlly.getName() + " fra jeres allies!"));
+                }
+
+            }
+            for(OfflinePlayer ally : targetAlly.members().keySet()) {
+                if(ally.isOnline()) {
+                    ally.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDin allierede " + bande.getName() + " opsagde jeres alliance"));
+                }
+            }
+
+        };
+
+        inventoryManager.put(player, new InventoryData(lambda, inventory));
+    }
+
+    public void showRivals(Player player) {
+        Inventory inventory = Bukkit.createInventory(null, 5 * 9, ChatColor.DARK_RED + "" + ChatColor.BOLD + "BANDE MENU"+ChatColor.DARK_GRAY+" \u2B24 "+ChatColor.RESET+""+ChatColor.GRAY+" RIVALER");
+        InventoryUtil.createBorders(inventory);
+        Bande bande = Bande.getBande(player);
+
+        if(bande == null) return;
+        inventory.setItem(4, bande.getDisplaySkull());
+        inventory.setItem(36, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+
+        if(bande.getRivals().isEmpty()) {
+            inventory.setItem(10, ItemUtils.setNameAndLore(Material.BARRIER, "&c&lIngen allies!", "&fDu har ikke nogen allies endnu!"));
+        }
+
+        int i = 9;
+        HashMap<Integer, Bande> slotToRival = new HashMap<>();
+        for(Bande rival : bande.getRivals()) {
+            if(i == 34) continue;
+            i++;
+            if(i == 16 || i == 25) i += 2;
+
+            slotToRival.put(i, rival);
+
+            ItemStack skullToDisplay = rival.getDisplaySkull();
+
+            if(bande.getMemberRank(player) >= Bande.PermissionLevel.RIGHTHANDMAN) {
+                ItemUtils.addLore(skullToDisplay, " ", "&8&l\u3014 &f&lVENSTRE KLIK FOR AT FJERNE&8&l \u3015");
+            }
+
+
+
+            inventory.setItem(i, skullToDisplay);
+
+        }
+
+
+        player.openInventory(inventory);
+
+
+        InventoryManager lambda = (InventoryClickEvent event) -> {
+            if (event.getSlot() == 36) {
+                showRelationsMenu(player);
+                return;
+            }
+            if(event.getAction() != InventoryAction.PICKUP_ALL) return;
+
+            if(bande.getMemberRank(player) < Bande.PermissionLevel.RIGHTHANDMAN) return;
+
+            Bande targetAlly = slotToRival.get(event.getSlot());
+
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har fjernet " + targetAlly.getName() + " fra dine rivaler!"));
+
+            for(OfflinePlayer member : bande.members().keySet()) {
+                if(member.isOnline()) {
+                    member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &f" + player.getName() + " har fjernet " + targetAlly.getName() + " fra jeres rivaler!"));
+                }
+
+            }
+            for(OfflinePlayer rival : targetAlly.members().keySet()) {
+                if(rival.isOnline()) {
+                    rival.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDin rival " + bande.getName() + " fjernede dig som rival"));
+                }
+            }
+
+        };
+
+        inventoryManager.put(player, new InventoryData(lambda, inventory));
     }
 
     public void showInviteMenu(Player player) {

@@ -478,16 +478,18 @@ public class Bande {
         this.bank = bank;
     }
 
-    public List<String> getRivals() {
-        return rivals;
+    public List<Bande> getRivals() {
+        if(rivals.isEmpty()) return Collections.emptyList();
+        return rivals.stream().map(id -> BandePlugin.instance.bander.stream().filter(bande -> id.equals(bande.getBandeID()))).findFirst().orElse(null).collect(Collectors.toList());
     }
 
     public void setRivals(List<String> rivals) {
         this.rivals = rivals;
     }
 
-    public List<String> getAllies() {
-        return allies;
+    public List<Bande> getAllies() {
+        if(allies.isEmpty()) return Collections.emptyList();
+        return allies.stream().map(id -> BandePlugin.instance.bander.stream().filter(bande -> id.equals(bande.getBandeID()))).findFirst().orElse(null).collect(Collectors.toList());
     }
 
     public void setAllies(List<String> allies) {
