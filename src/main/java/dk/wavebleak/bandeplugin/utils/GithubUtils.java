@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Scanner;
 
+@SuppressWarnings("all")
 public class GithubUtils {
 
     public static boolean checkVersion() {

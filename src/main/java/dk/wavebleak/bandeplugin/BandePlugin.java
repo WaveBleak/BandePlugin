@@ -9,7 +9,6 @@ import dk.wavebleak.bandeplugin.events.PlayerDeathEvent;
 import dk.wavebleak.bandeplugin.events.PlayerHitPlayerEvent;
 import dk.wavebleak.bandeplugin.utils.Manager;
 import net.milkbowl.vault.economy.Economy;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -21,6 +20,7 @@ import java.util.*;
 
 import static dk.wavebleak.bandeplugin.utils.GithubUtils.checkVersion;
 
+@SuppressWarnings("all")
 public final class BandePlugin extends JavaPlugin {
 
     public static BandePlugin instance;

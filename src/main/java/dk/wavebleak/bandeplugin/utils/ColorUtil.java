@@ -1,14 +1,14 @@
 package dk.wavebleak.bandeplugin.utils;
 
+import dk.wavebleak.bandeplugin.BandePlugin;
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-
+@SuppressWarnings("unused")
 public class ColorUtil {
 
     public static Color[] getTop3ColorsFromSkin(OfflinePlayer player) {
@@ -50,7 +50,7 @@ public class ColorUtil {
             }
             return topThreeColors;
         } catch (Exception e) {
-            e.printStackTrace();
+            BandePlugin.instance.getLogger().severe(e.getMessage());
         }
         return new Color[]{Color.fromRGB(0, 0, 0), Color.fromRGB(0, 0, 0), Color.fromRGB(0, 0, 0)};
     }

@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("all")
 public class Bande {
 
     private String bandeID;

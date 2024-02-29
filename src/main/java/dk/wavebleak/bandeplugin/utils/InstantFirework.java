@@ -1,5 +1,6 @@
 package dk.wavebleak.bandeplugin.utils;
 
+import dk.wavebleak.bandeplugin.BandePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -27,14 +28,13 @@ public class InstantFirework {
             ticksFlown.setInt(entityFirework, expectedLifespan.getInt(entityFirework) - 1);
             ticksFlown.setAccessible(false);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            BandePlugin.instance.getLogger().severe(ex.getMessage());
         }
     }
 
     private Class<?> getClass(String prefix, String nmsClassString) throws ClassNotFoundException {
         String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
         String name = prefix + version + nmsClassString;
-        Class<?> nmsClass = Class.forName(name);
-        return nmsClass;
+        return Class.forName(name);
     }
 }

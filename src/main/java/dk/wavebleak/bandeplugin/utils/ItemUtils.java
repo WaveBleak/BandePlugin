@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import dk.wavebleak.bandeplugin.BandePlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("all")
 public class ItemUtils {
 
     public static ItemStack setNameAndLore(ItemStack item, String name, String... lore) {
@@ -54,27 +56,7 @@ public class ItemUtils {
             profileField.setAccessible(true);
             profileField.set(meta, gameProfile);
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        skullItem.setItemMeta(meta);
-        return skullItem;
-    }
-
-    public static ItemStack getSkull(UUID uuid) {
-        ItemStack skullItem = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-        SkullMeta meta = (SkullMeta) skullItem.getItemMeta();
-
-
-        GameProfile gameProfile = new GameProfile(uuid, null);
-        gameProfile.getProperties().put("textures", new Property("textures", getTextureValue(uuid.toString())));
-
-        try {
-            Field profileField = meta.getClass().getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(meta, gameProfile);
-        } catch (Exception e) {
-            e.printStackTrace();
+            BandePlugin.instance.getLogger().severe(e.getMessage());
         }
 
         skullItem.setItemMeta(meta);
@@ -83,7 +65,7 @@ public class ItemUtils {
 
 
 
-    public static ItemStack addLore(ItemStack item, String... lines) {
+    public static void addLore(ItemStack item, String... lines) {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
 
@@ -93,7 +75,6 @@ public class ItemUtils {
 
         meta.setLore(lore);
         item.setItemMeta(meta);
-        return item;
     }
 
 
@@ -109,7 +90,7 @@ public class ItemUtils {
             profileField.setAccessible(true);
             profileField.set(meta, gameProfile);
         } catch (Exception e) {
-            e.printStackTrace();
+            BandePlugin.instance.getLogger().severe(e.getMessage());
         }
 
         skullItem.setItemMeta(meta);
@@ -147,7 +128,7 @@ public class ItemUtils {
                 return texture.get("value").getAsString();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            BandePlugin.instance.getLogger().severe(e.getMessage());
         }
         return null;
     }

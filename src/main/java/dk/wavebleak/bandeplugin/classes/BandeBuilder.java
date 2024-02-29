@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+@SuppressWarnings("all")
 public class BandeBuilder {
 
     private HashMap<String, Integer> membersUUID;

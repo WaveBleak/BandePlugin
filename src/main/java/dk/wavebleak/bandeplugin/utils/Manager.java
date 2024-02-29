@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
 
+@SuppressWarnings("all")
 public class Manager {
 
     private final File dbFile;

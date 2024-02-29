@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import static dk.wavebleak.bandeplugin.BandePlugin.economy;
 import static dk.wavebleak.bandeplugin.BandePlugin.inventoryManager;
 
+@SuppressWarnings("all")
 public class BandeCommand implements CommandExecutor {
 
     @Override
