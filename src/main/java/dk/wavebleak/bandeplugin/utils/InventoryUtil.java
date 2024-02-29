@@ -12,7 +12,7 @@ public class InventoryUtil {
         int inventorySize = 9;
         int rows = inv.getSize() / 9;
 
-        ItemStack item = ItemsUtil.setNameAndLore(new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte) 15), "&6");
+        ItemStack item = ItemUtils.setNameAndLore(new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte) 15), "&6");
 
 
         IntStream.range(0, inventorySize).forEach(i -> {

@@ -3,7 +3,7 @@ package dk.wavebleak.bandeplugin.classes;
 import dk.wavebleak.bandeplugin.BandePlugin;
 import dk.wavebleak.bandeplugin.utils.ColorUtil;
 import dk.wavebleak.bandeplugin.utils.InstantFirework;
-import dk.wavebleak.bandeplugin.utils.ItemsUtil;
+import dk.wavebleak.bandeplugin.utils.ItemUtils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -98,9 +98,9 @@ public class Bande {
         if(previousOwner.isOnline()) previousOwner.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu overgav ejerskabet af banden til &c"+newOwner.getName()+"&f!"));
     }
     public ItemStack getDisplaySkull() {
-        ItemStack skull = ItemsUtil.getSkull(owner());
+        ItemStack skull = ItemUtils.getSkull(owner());
 
-        return ItemsUtil.setNameAndLore(skull, "&c&l" + getName(), " ", "&8\u2B24 &fEjer: &7" + owner().getName(), "&8\u2B24 &fLevel: &7" + getLevel(), "&8\u2B24 &fVagt Kills: &7" + getVagtKills(), "&8\u2B24 &fOfficer Kills: &7" + getOffiKills(), "&8\u2B24 &fInspekt\u00f8r Kills: &7" + getInsKills(), "&8\u2B24 &fDirekt\u00f8r Kills: " + getDirKills());
+        return ItemUtils.setNameAndLore(skull, "&c&l" + getName(), " ", "&8\u2B24 &fEjer: &7" + owner().getName(), "&8\u2B24 &fLevel: &7" + getLevel(), "&8\u2B24 &fVagt Kills: &7" + getVagtKills(), "&8\u2B24 &fOfficer Kills: &7" + getOffiKills(), "&8\u2B24 &fInspekt\u00f8r Kills: &7" + getInsKills(), "&8\u2B24 &fDirekt\u00f8r Kills: " + getDirKills());
     }
 
     public Requirement requirement1() {

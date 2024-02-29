@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class ItemsUtil {
+public class ItemUtils {
 
     public static ItemStack setNameAndLore(ItemStack item, String name, String... lore) {
         ItemMeta meta = item.getItemMeta();

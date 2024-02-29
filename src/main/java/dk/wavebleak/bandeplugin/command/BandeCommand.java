@@ -1,12 +1,9 @@
 package dk.wavebleak.bandeplugin.command;
 
 import dk.wavebleak.bandeplugin.BandePlugin;
-import dk.wavebleak.bandeplugin.classes.BandeBuilder;
-import dk.wavebleak.bandeplugin.classes.InventoryData;
-import dk.wavebleak.bandeplugin.classes.InventoryManager;
-import dk.wavebleak.bandeplugin.classes.Bande;
+import dk.wavebleak.bandeplugin.classes.*;
 import dk.wavebleak.bandeplugin.utils.InventoryUtil;
-import dk.wavebleak.bandeplugin.utils.ItemsUtil;
+import dk.wavebleak.bandeplugin.utils.ItemUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -27,6 +24,7 @@ import static dk.wavebleak.bandeplugin.BandePlugin.economy;
 import static dk.wavebleak.bandeplugin.BandePlugin.inventoryManager;
 
 public class BandeCommand implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if(!(sender instanceof Player)) return false;
@@ -57,9 +55,9 @@ public class BandeCommand implements CommandExecutor {
         InventoryUtil.createBorders(inventory);
         if(bande == null) { // Ingen bande
 
-            inventory.setItem(20, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTg3MDMxYzQ3MjZkZGVkZDY1YjZhMTFkMzE0N2U2NzI0ZGVmYmIyOTBkYTI5Y2JiNzlkYTI0OTA1NDZjYmYifX19"), "&c&lTOP LEVEL", "&fplease make a leaderboard", "&ffor top level","&fpookie wookie bear :3"));
-            inventory.setItem(22, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmQwZjQwNjFiZmI3NjdhN2Y5MjJhNmNhNzE3NmY3YTliMjA3MDliZDA1MTI2OTZiZWIxNWVhNmZhOThjYTU1YyJ9fX0="), "&4&lOpret en bande", "&8\u2B24 &fDet koster &c$5000 &fat oprette en bande!"));
-            inventory.setItem(24, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDJhMzA0OGY1M2IyNGZiMzZlYmFjNjRkODU4Mzg5MTM1ODgzZjI1ODc0ZTQ1NDZkMWZjZDg5YzMwYmQ2ZjY1NiJ9fX0="), "&c&lDINE INVITATIONER", "&8\u2B24 &fKlik her for at se dine invitationer!"));
+            inventory.setItem(20, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTg3MDMxYzQ3MjZkZGVkZDY1YjZhMTFkMzE0N2U2NzI0ZGVmYmIyOTBkYTI5Y2JiNzlkYTI0OTA1NDZjYmYifX19"), "&c&lTOP LEVEL", "&fplease make a leaderboard", "&ffor top level","&fpookie wookie bear :3"));
+            inventory.setItem(22, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmQwZjQwNjFiZmI3NjdhN2Y5MjJhNmNhNzE3NmY3YTliMjA3MDliZDA1MTI2OTZiZWIxNWVhNmZhOThjYTU1YyJ9fX0="), "&4&lOpret en bande", "&8\u2B24 &fDet koster &c$5000 &fat oprette en bande!"));
+            inventory.setItem(24, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDJhMzA0OGY1M2IyNGZiMzZlYmFjNjRkODU4Mzg5MTM1ODgzZjI1ODc0ZTQ1NDZkMWZjZDg5YzMwYmQ2ZjY1NiJ9fX0="), "&c&lDINE INVITATIONER", "&8\u2B24 &fKlik her for at se dine invitationer!"));
 
         } else { // Har en bande
             inventory.setItem(4, bande.getDisplaySkull());
@@ -76,7 +74,7 @@ public class BandeCommand implements CommandExecutor {
                 lore.addAll(Arrays.asList(bande.genererateLines()));
                 lore.add(" ");
                 lore.add("&8&l\u3014 &f&lKLIK HER &8&l\u3015");
-                inventory.setItem(13, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(levelupHead), levelupColor + "&lLEVELUP", lore.toArray(new String[0])));
+                inventory.setItem(13, ItemUtils.setNameAndLore(ItemUtils.getSkull(levelupHead), levelupColor + "&lLEVELUP", lore.toArray(new String[0])));
             }else{
                 levelupHead = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmQ5Mjg3NjE2MzQzZDgzM2U5ZTczMTcxNTljYWEyY2IzZTU5NzQ1MTEzOTYyYzEzNzkwNTJjZTQ3ODg4NGZhIn19fQ==";
                 levelupColor = "&c";
@@ -88,16 +86,16 @@ public class BandeCommand implements CommandExecutor {
                 lore.add(" ");
                 lore.add(" ");
                 lore.add("&8&l\u3014 &c&lI HAR IKKE OPN\u00C5ET ALLE KRAV &8&l\u3015");
-                inventory.setItem(13, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(levelupHead), levelupColor + "&lLEVELUP", lore.toArray(new String[0])));
+                inventory.setItem(13, ItemUtils.setNameAndLore(ItemUtils.getSkull(levelupHead), levelupColor + "&lLEVELUP", lore.toArray(new String[0])));
             }
 
-            inventory.setItem(19, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTk4ZGY0MmY0NzdmMjEzZmY1ZTlkN2ZhNWE0Y2M0YTY5ZjIwZDljZWYyYjkwYzRhZTRmMjliZDE3Mjg3YjUifX19"), "&c&lBANK", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fBande \u00f8konomi", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
-            inventory.setItem(21, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTMzZmM5YTQ1YmUxM2NhNTdhNzhiMjE3NjJjNmUxMjYyZGFlNDExZjEzMDQ4Yjk2M2Q5NzJhMjllMDcwOTZhYiJ9fX0="), "&c&lOPGRADERINGER", " ", "&f&lHer kan du k\u00f8be:", "&8\u2B24 &fAdgang til territorier" +  " ", "&8\u2B24 &fAdgang til bande hus", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
+            inventory.setItem(19, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTFkZGIyZmQ3NzIwMDcxNjk0ZTllODBhNmY0YThiOGFiYTc3NjBiYjFkYTQ2OGRlNjM3YTZiZjljODVlYTVhZSJ9fX0="), "&c&lBANK", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fBande \u00f8konomi", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
+            inventory.setItem(21, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTMzZmM5YTQ1YmUxM2NhNTdhNzhiMjE3NjJjNmUxMjYyZGFlNDExZjEzMDQ4Yjk2M2Q5NzJhMjllMDcwOTZhYiJ9fX0="), "&c&lOPGRADERINGER", " ", "&f&lHer kan du k\u00f8be:", "&8\u2B24 &fAdgang til territorier" +  " ", "&8\u2B24 &fAdgang til bande hus", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
 
             /* Fix for medlemmer icon showing up late */
-            inventory.setItem(23, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(bande.owner()), "&c&lMEDLEMMER", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fBande medlemmer", " ", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
+            inventory.setItem(23, ItemUtils.setNameAndLore(ItemUtils.getSkull(bande.owner()), "&c&lMEDLEMMER", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fBande medlemmer", " ", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
 
-            inventory.setItem(25, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjVjOTZjZjNlNWM2OTgwYzcxNGYyNzkxN2I2NDM5YjA1OTY1MmY0Y2MyMTRhZGQ3MGRjNzQwYzZjMWZlNzBmMSJ9fX0="), "&c&lRELATIONER", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fAllierede", "&8\u2B24 &fRivaler", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
+            inventory.setItem(25, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjVjOTZjZjNlNWM2OTgwYzcxNGYyNzkxN2I2NDM5YjA1OTY1MmY0Y2MyMTRhZGQ3MGRjNzQwYzZjMWZlNzBmMSJ9fX0="), "&c&lRELATIONER", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fAllierede", "&8\u2B24 &fRivaler", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
 
             List<String> inviteLore;
             if(bande.getMemberRank(player) >= Bande.PermissionLevel.RIGHTHANDMAN) {
@@ -106,7 +104,7 @@ public class BandeCommand implements CommandExecutor {
                 inviteLore = Arrays.asList(" ", "&c&lDu har ikke adgang!");
             }
 
-            inventory.setItem(31, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2ZhM2Y2ZjlmNTBhYzY3ZGI5OGI2OGExNWZkMDU5MDE1Mjg4MzZhMThjNzBmYjM5MmFhODlmNGI2MDgzNzY2YiJ9fX0="), "&c&lInvit\u00E9r Spillere", inviteLore.toArray(new String[0])));
+            inventory.setItem(31, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2ZhM2Y2ZjlmNTBhYzY3ZGI5OGI2OGExNWZkMDU5MDE1Mjg4MzZhMThjNzBmYjM5MmFhODlmNGI2MDgzNzY2YiJ9fX0="), "&c&lInvit\u00E9r Spillere", inviteLore.toArray(new String[0])));
 
             String leaveName;
             List<String> leaveLore;
@@ -118,7 +116,7 @@ public class BandeCommand implements CommandExecutor {
                 leaveLore = Arrays.asList(" ", "&fForlad bande", " ", "&8&l\u3014 &f&lSHIFT + TRYK HER &8&l\u3015");
             }
 
-            inventory.setItem(40, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkMWFiYTczZjYzOWY0YmM0MmJkNDgxOTZjNzE1MTk3YmUyNzEyYzNiOTYyYzk3ZWJmOWU5ZWQ4ZWZhMDI1In19fQ=="), leaveName, leaveLore.toArray(new String[0])));
+            inventory.setItem(40, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkMWFiYTczZjYzOWY0YmM0MmJkNDgxOTZjNzE1MTk3YmUyNzEyYzNiOTYyYzk3ZWJmOWU5ZWQ4ZWZhMDI1In19fQ=="), leaveName, leaveLore.toArray(new String[0])));
 
         }
 
@@ -206,7 +204,7 @@ public class BandeCommand implements CommandExecutor {
                     i[0]++;
                     if(i[0] >= set.size()) i[0] = 0;
 
-                    inventory.setItem(23, ItemsUtil.setNameAndLore(ItemsUtil.getSkull(entry.getKey()), "&c&lMEDLEMMER", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fBande medlemmer", " ", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
+                    inventory.setItem(23, ItemUtils.setNameAndLore(ItemUtils.getSkull(entry.getKey()), "&c&lMEDLEMMER", " ", "&f&lHer kan du administrere:", "&8\u2B24 &fBande medlemmer", " ", "&8&l\u3014 &f&lTRYK HER &8&l \u3015"));
                 }
             }.runTaskTimer(BandePlugin.instance, 0, 20);
         }
@@ -222,7 +220,10 @@ public class BandeCommand implements CommandExecutor {
         if(bande == null) return;
 
         inventory.setItem(4, bande.getDisplaySkull());
-        inventory.setItem(36, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+        inventory.setItem(36, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+        inventory.setItem(22, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTFkZGIyZmQ3NzIwMDcxNjk0ZTllODBhNmY0YThiOGFiYTc3NjBiYjFkYTQ2OGRlNjM3YTZiZjljODVlYTVhZSJ9fX0="), "&c&l" + bande.getName() + " Bank", "&f&lSaldo: &f$" + bande.getBank()));
+        inventory.setItem(20, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmYyZTE2ZWNiNWEwZmU3NTk3NDg5NTY5YjAwZmFjOTFjYmE2YWViOGQ0MTc5ZmI0ZWFkMWY3YzEzM2FiNjcwOSJ9fX0="), "&c&lDeposit", "&fPut penge ind i banken", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015" /* TRYK HER LINE */));
+        inventory.setItem(24, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWZkMTA4MzgzZGZhNWIwMmU4NjYzNTYwOTU0MTUyMGU0ZTE1ODk1MmQ2OGMxYzhmOGYyMDBlYzdlODg2NDJkIn19fQ=="), "&c&lWithdraw", "&fTag penge ud af banken", "", "&8&l\u3014 &f&lTRYK HER &8&l \u3015" /* TRYK HER LINE */));
 
         player.openInventory(inventory);
 
@@ -230,6 +231,22 @@ public class BandeCommand implements CommandExecutor {
             switch (event.getSlot()) {
                 case 36:
                     openMainInventory(player);
+                    break;
+                case 20: //Deposit
+                    promptForMoney(player, PromptType.DEPOSIT).thenAccept(amount -> {
+                        economy.withdrawPlayer(player, amount);
+                        bande.setBank(Math.round(bande.getBank() + amount));
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1 ,1.5f);
+                        showBankMenu(player);
+                    });
+                    break;
+                case 24: //Withdraw
+                    promptForMoney(player, PromptType.WITHDRAW).thenAccept(amount -> {
+                        economy.depositPlayer(player, amount);
+                        bande.setBank(Math.round(bande.getBank() - amount));
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1 ,1.5f);
+                        showBankMenu(player);
+                    });
                     break;
             }
 
@@ -245,7 +262,7 @@ public class BandeCommand implements CommandExecutor {
 
         if(bande == null) return;
         inventory.setItem(4, bande.getDisplaySkull());
-        inventory.setItem(36, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+        inventory.setItem(36, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
 
 
         player.openInventory(inventory);
@@ -271,7 +288,7 @@ public class BandeCommand implements CommandExecutor {
 
         if(bande == null) return;
         inventory.setItem(4, bande.getDisplaySkull());
-        inventory.setItem(36, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+        inventory.setItem(36, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
 
         int i = 9;
         HashMap<Integer, OfflinePlayer> slotToMember = new HashMap<>();
@@ -290,17 +307,17 @@ public class BandeCommand implements CommandExecutor {
                 title = ChatColor.RED + "[Bande Leder] " + ChatColor.AQUA + bande.owner().getName();
             }
 
-            ItemStack memberSkull = ItemsUtil.getSkull(offlinePlayer);
+            ItemStack memberSkull = ItemUtils.getSkull(offlinePlayer);
 
-            ItemsUtil.setNameAndLore(memberSkull, title, "&fRank: " + bande.getMemberRankString(offlinePlayer), "&lSaldo: " + economy.getBalance(offlinePlayer));
+            ItemUtils.setNameAndLore(memberSkull, title, "&fRank: " + bande.getMemberRankString(offlinePlayer), "&fSaldo: " + economy.getBalance(offlinePlayer));
 
             if(bande.getMemberRank(player) >= Bande.PermissionLevel.RIGHTHANDMAN) {
                 if(offlinePlayer.equals(player)) {
-                    ItemsUtil.addLore(memberSkull, " ", "&cDu kan ikke ændre på dig selv!");
+                    ItemUtils.addLore(memberSkull, " ", "&cDu kan ikke \u00E6ndre p\u00E5 dig selv!");
                 } else {
-                    ItemsUtil.addLore(memberSkull, " ", "&8&l\u3014 &f&lVENSTRE KLIK FOR AT FORFREMME &8&l \u3015", "&8&l\u3014 &f&lH\u00d8JRE KLIK FOR AT NEDGRADERE &8&l \u3015", "&8&l\u3014 &f&lDROP FOR AT SMIDE UD &8&l \u3015");
+                    ItemUtils.addLore(memberSkull, " ", "&8&l\u3014 &f&lVENSTRE KLIK FOR AT FORFREMME &8&l \u3015", "&8&l\u3014 &f&lH\u00d8JRE KLIK FOR AT NEDGRADERE &8&l \u3015", "&8&l\u3014 &f&lDROP FOR AT SMIDE UD &8&l \u3015");
                     if(bande.owner().equals(player)) {
-                        ItemsUtil.addLore(memberSkull, "&fOverf\u00F8r ejerskab!", "&8&l\u3014 &f&lTRYK PÅ MUSEHJULET&8&l \u3015");
+                        ItemUtils.addLore(memberSkull, "&8&l\u3014 &f&lTRYK P\u00C5 MUSEHJULET FOR AT OVERF\u00d8RE EJERSKAB&8&l \u3015");
                     }
                 }
             }
@@ -370,6 +387,51 @@ public class BandeCommand implements CommandExecutor {
 
     }
 
+    public CompletableFuture<Float> promptForMoney(OfflinePlayer player, PromptType type) {
+        CompletableFuture<Float> future = new CompletableFuture<>();
+
+        Bande bande = Bande.getBande(player);
+
+        if(bande == null) return future;
+
+        AnvilGUI.Builder builder = new AnvilGUI.Builder();
+        builder.plugin(BandePlugin.instance);
+        builder.text("Skriv et tal");
+        builder.preventClose();
+        builder.onClick((slot, stateSnapshot) -> {
+            if(slot != AnvilGUI.Slot.OUTPUT) return Collections.emptyList();
+
+            try {
+                float amount = Float.parseFloat(stateSnapshot.getText());
+                if(amount <= 0) {
+                    return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText(ChatColor.RED + "Ugyldig m\u00E6ngde"));
+                }
+                if(type == PromptType.DEPOSIT) {
+                    if(economy.getBalance(player) >= amount) {
+                        return Arrays.asList(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> future.complete(amount)));
+                    }
+                    return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText(ChatColor.RED + "Ikke nok penge!"));
+                }
+                if(type == PromptType.WITHDRAW) {
+                    if(bande.getBank() >= amount) {
+                        return Arrays.asList(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> future.complete(amount)));
+                    }
+                    return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText(ChatColor.RED + "Ikke nok penge!"));
+                }
+
+            }catch (Exception e) {
+                return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText(ChatColor.RED + "Ikke et tal!"));
+            }
+            return Collections.singletonList(AnvilGUI.ResponseAction.replaceInputText(ChatColor.RED + "Noget gik galt!"));
+        });
+
+        if(player.isOnline()) {
+            builder.open(player.getPlayer());
+        }
+
+        return future;
+    }
+
     public CompletableFuture<Boolean> showConfirmation(OfflinePlayer player) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         AnvilGUI.Builder builder = new AnvilGUI.Builder();
@@ -405,7 +467,7 @@ public class BandeCommand implements CommandExecutor {
 
         if(bande == null) return;
         inventory.setItem(4, bande.getDisplaySkull());
-        inventory.setItem(36, ItemsUtil.setNameAndLore(ItemsUtil.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
+        inventory.setItem(36, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA1MWI1OTA4NWQyYzQyNDk1Nzc4MjNmNjNlMWUyZWI5ZjdjZjY0YjdjNzg3ODVhMjE4MDVmYWQzZWYxNCJ9fX0="), "&c&lTilbage", "&cKlik her", "&cFor at komme tilbage til hovedmenuen"));
 
 
         player.openInventory(inventory);
@@ -507,7 +569,7 @@ public class BandeCommand implements CommandExecutor {
 
                 ItemStack skullToDisplay = bande.getDisplaySkull();
 
-                ItemsUtil.addLore(skullToDisplay, " ", "&8&l\u3014 &f&lVENSTRE KLIK FOR AT JOINE&8&l \u3015", "&8&l\u3014 &f&lH\u00d8JRE KLIK FOR AT AFVISE&8&l \u3015");
+                ItemUtils.addLore(skullToDisplay, " ", "&8&l\u3014 &f&lVENSTRE KLIK FOR AT JOINE&8&l \u3015", "&8&l\u3014 &f&lH\u00d8JRE KLIK FOR AT AFVISE&8&l \u3015");
 
                 inventory.setItem(i, skullToDisplay);
             }
