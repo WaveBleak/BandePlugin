@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.stream.IntStream;
 
-public class InventoryUtil {
+public class InventoryUtils {
 
     public static void createBorders(Inventory inv) {
         int inventorySize = 9;

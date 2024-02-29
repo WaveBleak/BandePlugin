@@ -1,7 +1,7 @@
 package dk.wavebleak.bandeplugin.classes;
 
 import dk.wavebleak.bandeplugin.BandePlugin;
-import dk.wavebleak.bandeplugin.utils.ColorUtil;
+import dk.wavebleak.bandeplugin.utils.ColorUtils;
 import dk.wavebleak.bandeplugin.utils.InstantFirework;
 import dk.wavebleak.bandeplugin.utils.ItemUtils;
 import org.bukkit.*;
@@ -167,7 +167,7 @@ public class Bande {
             requirement3().subtractIfMoneyRequirement(this);
         }
         if(verbose) {
-            Color[] colors = ColorUtil.getTop3ColorsFromSkin(ownerUUID);
+            Color[] colors = ColorUtils.getTop3ColorsFromSkin(ownerUUID);
             for(OfflinePlayer player : members().keySet()) {
                 if(!player.isOnline()) continue;
                 Player target = player.getPlayer();

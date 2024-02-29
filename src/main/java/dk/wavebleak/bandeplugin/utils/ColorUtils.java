@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.*;
 @SuppressWarnings("unused")
-public class ColorUtil {
+public class ColorUtils {
 
     public static Color[] getTop3ColorsFromSkin(OfflinePlayer player) {
         return getTop3ColorsFromSkin(player.getUniqueId().toString());

@@ -1,5 +1,9 @@
 package dk.wavebleak.bandeplugin.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import dk.wavebleak.bandeplugin.classes.Info;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Scanner;
@@ -7,10 +11,10 @@ import java.util.Scanner;
 @SuppressWarnings("all")
 public class GithubUtils {
 
-    public static boolean checkVersion() {
+    public static boolean checkVersion(Info info) {
         try {
             final String thisVersion = "0.0.2";
-            final String githubVersion = getVersion();
+            final String githubVersion = info.version;
 
             return isFirstVersionNewer(thisVersion, githubVersion);
         }catch (Exception e) {
@@ -44,8 +48,8 @@ public class GithubUtils {
     }
 
 
-    private static String getVersion() throws IOException {
-        URL url = new URL("https://raw.githubusercontent.com/WaveBleak/BandePlugin/master/build.version");
+    public static Info getInfo() throws IOException {
+        URL url = new URL("https://raw.githubusercontent.com/WaveBleak/BandePlugin/master/.buildinfo");
         StringBuilder content = new StringBuilder();
 
         try (Scanner scanner = new Scanner(url.openStream())) {
@@ -54,7 +58,8 @@ public class GithubUtils {
                 content.append(System.lineSeparator());
             }
         }
+        Gson gson = new Gson();
 
-        return content.toString().trim();
+        return gson.fromJson(content.toString().trim(), Info.class);
     }
 }
