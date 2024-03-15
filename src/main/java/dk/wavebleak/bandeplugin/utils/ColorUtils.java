@@ -7,7 +7,10 @@ import org.bukkit.OfflinePlayer;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
 @SuppressWarnings("unused")
 public class ColorUtils {
 
@@ -54,5 +57,8 @@ public class ColorUtils {
         }
         return new Color[]{Color.fromRGB(0, 0, 0), Color.fromRGB(0, 0, 0), Color.fromRGB(0, 0, 0)};
     }
+
+
+
 
 }

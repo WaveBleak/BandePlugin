@@ -6,6 +6,10 @@ plugins {
 group = 'dk.wavebleak'
 version = '1.0'
 
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -24,13 +28,19 @@ repositories {
     maven{
         url = "https://jitpack.io"
     }
+    maven {
+        url "https://repo.codemc.io/repository/maven-public/"
+    }
+    maven { url "https://repo.dmulloy2.net/repository/public/" }
 }
 
 dependencies {
     implementation "net.wesjd:anvilgui:1.9.2-SNAPSHOT"
+    implementation "hm.zelha:particlesfx:1.8.8"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly "org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT"
 }
+
 
 def targetJavaVersion = 8
 java {

@@ -10,6 +10,7 @@ import java.util.UUID;
 @SuppressWarnings("all")
 public class BandeBuilder {
 
+    private String bandeID;
     private HashMap<String, Integer> membersUUID;
     private List<String> rivals;
     private List<String> allies;
@@ -25,6 +26,8 @@ public class BandeBuilder {
     private String name;
     private boolean unlockedTerritory;
     private boolean unlockedHouse;
+    private int allyHitMitigation;
+    private int rivalKills;
 
     public BandeBuilder(OfflinePlayer owner) {
         HashMap<String, Integer> members = new HashMap<>();
@@ -44,10 +47,18 @@ public class BandeBuilder {
         this.name = "UNNAMED";
         this.unlockedTerritory = false;
         this.unlockedHouse = false;
+        this.allyHitMitigation = 100;
+        this.rivalKills = 0;
+        this.bandeID = UUID.randomUUID().toString();
     }
 
     public Bande create() {
-        return new Bande(membersUUID, rivals, allies, ownerUUID, level, kills, vagtKills, offiKills, insKills, dirKills, deaths, bank, name, unlockedTerritory, unlockedHouse);
+        return new Bande(membersUUID, rivals, allies, ownerUUID, level, kills, vagtKills, offiKills, insKills, dirKills, deaths, bank, name, unlockedTerritory, unlockedHouse, allyHitMitigation, rivalKills, bandeID);
+    }
+
+    public BandeBuilder setBandeID(String id) {
+        this.bandeID = id;
+        return this;
     }
 
     public BandeBuilder addMember(OfflinePlayer member) {
@@ -141,7 +152,18 @@ public class BandeBuilder {
         return this;
     }
 
-    public void setUnlockedHouse(boolean unlockedHouse) {
+    public BandeBuilder setUnlockedHouse(boolean unlockedHouse) {
         this.unlockedHouse = unlockedHouse;
+        return this;
+    }
+
+    public BandeBuilder setAllyHitMitigation(int value) {
+        this.allyHitMitigation = value;
+        return this;
+    }
+
+    public BandeBuilder setRivalKills(int value) {
+        this.rivalKills = value;
+        return this;
     }
 }

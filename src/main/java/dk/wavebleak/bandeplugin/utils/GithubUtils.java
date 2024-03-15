@@ -1,7 +1,6 @@
 package dk.wavebleak.bandeplugin.utils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import dk.wavebleak.bandeplugin.classes.Info;
 
 import java.io.IOException;
@@ -13,7 +12,7 @@ public class GithubUtils {
 
     public static boolean checkVersion(Info info) {
         try {
-            final String thisVersion = "0.0.2";
+            final String thisVersion = "0.0.3";
             final String githubVersion = info.version;
 
             return isFirstVersionNewer(thisVersion, githubVersion);

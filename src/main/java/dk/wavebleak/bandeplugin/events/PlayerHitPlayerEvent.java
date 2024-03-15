@@ -14,12 +14,20 @@ public class PlayerHitPlayerEvent implements Listener {
             Player victim = (Player) event.getEntity();
             Player attacker = (Player) event.getDamager();
 
-            if(Bande.isSameTeam(victim, attacker)) {
-                event.setCancelled(true);
+
+            Bande attackerBande = Bande.getBande(attacker);
+            Bande victimBande = Bande.getBande(victim);
+
+            if(Bande.isSameTeam(victim, attacker) || attackerBande.hasAlly(victimBande)) {
+                double newDamage = getPercentage(attackerBande.getAllyHitMitigation(), event.getDamage());
+
+                event.setDamage(newDamage);
             }
         }
     }
 
-
+    public static double getPercentage(double percent, double total) {
+        return (percent / 100) * total;
+    }
 
 }

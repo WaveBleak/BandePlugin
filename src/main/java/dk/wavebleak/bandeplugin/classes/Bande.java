@@ -30,32 +30,10 @@ public class Bande {
     private String name;
     private boolean unlockedTerritory;
     private boolean unlockedHouse;
+    private int allyHitMitigation;
+    private int rivalKills;
 
-
-    public Bande(HashMap<OfflinePlayer, Integer> members, OfflinePlayer owner, List<String> rivals, List<String> allies, int level, int kills, int vagtKills, int offiKills, int insKills, int dirKills, int deaths, long bank, String name, boolean unlockedTerritory, boolean unlockedHouse) {
-        this.membersUUID = new HashMap<>();
-        for (OfflinePlayer player : members.keySet()) {
-            this.membersUUID.put(player.getUniqueId().toString(), members.get(player));
-        }
-        this.ownerUUID = owner.getUniqueId().toString();
-        this.rivals = rivals;
-        this.allies = allies;
-        this.level = level;
-        this.kills = kills;
-        this.vagtKills = vagtKills;
-        this.offiKills = offiKills;
-        this.insKills = insKills;
-        this.dirKills = dirKills;
-        this.deaths = deaths;
-        this.bank = bank;
-        this.name = name;
-        this.unlockedTerritory = unlockedTerritory;
-        this.unlockedHouse = unlockedHouse;
-
-        this.bandeID = UUID.randomUUID().toString();
-    }
-
-    public Bande(HashMap<String, Integer> membersUUID, List<String> rivals, List<String> allies, String ownerUUID, int level, int kills, int vagtKills, int offiKills, int insKills, int dirKills, int deaths, long bank, String name, boolean unlockedTerritory, boolean unlockedHouse) {
+    public Bande(HashMap<String, Integer> membersUUID, List<String> rivals, List<String> allies, String ownerUUID, int level, int kills, int vagtKills, int offiKills, int insKills, int dirKills, int deaths, long bank, String name, boolean unlockedTerritory, boolean unlockedHouse, int allyHitMitigation, int rivalKills, String bandeID) {
         this.membersUUID = membersUUID;
         this.rivals = rivals;
         this.allies = allies;
@@ -71,14 +49,59 @@ public class Bande {
         this.name = name;
         this.unlockedTerritory = unlockedTerritory;
         this.unlockedHouse = unlockedHouse;
+        this.allyHitMitigation = allyHitMitigation;
+        this.rivalKills = rivalKills;
 
-        this.bandeID = UUID.randomUUID().toString();
+        this.bandeID = bandeID;
+    }
+
+
+    public void addDirKill() {
+        this.dirKills++;
+    }
+
+    public void addInsKill() {
+        this.insKills++;
+    }
+
+    public void addOfficerKill() {
+        this.offiKills++;
+    }
+
+    public void addVagtKill() {
+        this.vagtKills++;
     }
 
     public int maxLevel() {
         return 5;
     }
 
+
+    public void addAlly(Bande bande) {
+        Bukkit.broadcastMessage("LIST: " + String.join(", ", allies));
+        Bukkit.broadcastMessage("BANDEID: " + bande.bandeID);
+        this.allies.add(bande.bandeID);
+        Bukkit.broadcastMessage("LIST: " + String.join(", ", allies));
+    }
+
+    public boolean hasAlly(Bande bande) {
+        return this.allies.contains(bande.bandeID);
+    }
+    public boolean hasRival(Bande bande) {
+        return this.rivals.contains(bande.bandeID);
+    }
+
+    public void addRival(Bande bande) {
+        this.rivals.add(bande.bandeID);
+    }
+
+    public void removeAlly(Bande bande) {
+        this.allies.remove(bande.bandeID);
+    }
+
+    public void removeRival(Bande bande) {
+        this.rivals.remove(bande.bandeID);
+    }
 
     public void transferOwner(OfflinePlayer newOwner) {
         OfflinePlayer previousOwner = owner();
@@ -101,13 +124,13 @@ public class Bande {
     public ItemStack getDisplaySkull() {
         ItemStack skull = ItemUtils.getSkull(owner());
 
-        return ItemUtils.setNameAndLore(skull, "&c&l" + getName(), " ", "&8\u2B24 &fEjer: &7" + owner().getName(), "&8\u2B24 &fLevel: &7" + getLevel(), "&8\u2B24 &fVagt Kills: &7" + getVagtKills(), "&8\u2B24 &fOfficer Kills: &7" + getOffiKills(), "&8\u2B24 &fInspekt\u00f8r Kills: &7" + getInsKills(), "&8\u2B24 &fDirekt\u00f8r Kills: " + getDirKills());
+        return ItemUtils.setNameAndLore(skull, "&c&l" + getName(), "&8⬤ &fEjer: &7" + owner().getName(), " ", "&8⬤ &fLevel: &7" + getLevel(), "&8⬤ &fBank: &7" + getBank(), " ", "&8⬤ &fRival Kills: &7" + getRivalKills(), "&8⬤ &fVagt Kills: &7" + getVagtKills(), "&8⬤ &fOfficer Kills: &7" + getOffiKills(), "&8⬤ &fInspektør Kills: &7" + getInsKills(), "&8⬤ &fDirektør Kills: &7" + getDirKills());
     }
 
     public Requirement requirement1() {
         switch (this.level) {
             case 1:
-                return new Requirement(Requirement.LevelUpRequirement.KILLS, 100);
+                return new Requirement(Requirement.LevelUpRequirement.RIVALKILLS, 30);
             case 2:
                 return new Requirement(Requirement.LevelUpRequirement.ALLIES, 1);
             case 3:
@@ -296,7 +319,7 @@ public class Bande {
                 }
             }
         }
-        if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har forladt banden"+getName()+"&f!"));
+        if(player.isOnline()) player.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har forladt banden "+getName()+"&f!"));
         BandePlugin.instance.save();
     }
 
@@ -304,7 +327,7 @@ public class Bande {
         for(OfflinePlayer member : members().keySet()) {
             if(member.equals(owner())) continue;
             if(member.isOnline()) {
-                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+ owner().getName()+"&f har opl\u00F8st banden!"));
+                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &c"+ owner().getName()+"&f har opløst banden!"));
             }
             for(Map.Entry<Player, InventoryData> entry : BandePlugin.inventoryManager.entrySet()) {
                 if(entry.getKey().equals(member)) {
@@ -316,7 +339,7 @@ public class Bande {
                 }
             }
         }
-        if(owner().isOnline()) owner().getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har opl\u00F8st banden!"));
+        if(owner().isOnline()) owner().getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har opløst banden!"));
 
         BandePlugin.instance.bander.remove(this);
         BandePlugin.instance.save();
@@ -386,7 +409,7 @@ public class Bande {
         for(int i = 0; i <= 2; i++){
             String req = "&c"+currentAmountForRequirements[i];
             if(currentAmountForRequirements[i] >= amountForRequirements[i]) req = "&a"+amountForRequirements[i];
-            toReturn.add(ChatColor.translateAlternateColorCodes('&', "&8\u2B24 &f&n"+amountForRequirements[i]+"&r&f "+requiremetntsAsString[i]+"&8 \u3010 "+req+" / "+amountForRequirements[i]+" &8\u3011"));
+            toReturn.add(ChatColor.translateAlternateColorCodes('&', "&8⬤ &f&n"+amountForRequirements[i]+"&r&f "+requiremetntsAsString[i]+"&8 【 "+req+" / "+amountForRequirements[i]+" &8】"));
         }
         return toReturn.toArray(new String[0]);
     }
@@ -478,10 +501,23 @@ public class Bande {
     public void setBank(long bank) {
         this.bank = bank;
     }
+    public void setAllyHitMitigation(int value) {
+        this.allyHitMitigation = value;
+    }
+
+    public int getAllyHitMitigation() {
+        return this.allyHitMitigation;
+    }
 
     public List<Bande> getRivals() {
         if(rivals.isEmpty()) return Collections.emptyList();
-        return rivals.stream().map(id -> BandePlugin.instance.bander.stream().filter(bande -> id.equals(bande.getBandeID()))).findFirst().orElse(null).collect(Collectors.toList());
+        List<Bande> rivals = new ArrayList<>();
+        for(String rivalID : this.rivals) {
+            Optional<Bande> maybeRival = BandePlugin.instance.bander.stream().filter(bande -> bande.bandeID.equals(rivalID)).findAny();
+
+            if(maybeRival.isPresent()) rivals.add(maybeRival.get());
+        }
+        return rivals;
     }
 
     public void setRivals(List<String> rivals) {
@@ -490,7 +526,13 @@ public class Bande {
 
     public List<Bande> getAllies() {
         if(allies.isEmpty()) return Collections.emptyList();
-        return allies.stream().map(id -> BandePlugin.instance.bander.stream().filter(bande -> id.equals(bande.getBandeID()))).findFirst().orElse(null).collect(Collectors.toList());
+        List<Bande> allies = new ArrayList<>();
+        for(String allyID : this.allies) {
+            Optional<Bande> maybeAlly = BandePlugin.instance.bander.stream().filter(bande -> bande.bandeID.equals(allyID)).findAny();
+            
+            if(maybeAlly.isPresent()) allies.add(maybeAlly.get());
+        }
+        return allies;
     }
 
     public void setAllies(List<String> allies) {
@@ -524,6 +566,12 @@ public class Bande {
     public void setUnlockedHouse(boolean unlockedHouse) {
         this.unlockedHouse = unlockedHouse;
     }
+    public int getRivalKills() {
+        return this.rivalKills;
+    }
+    public void setRivalKills(int value) {
+        this.rivalKills = value;
+    }
 
 
     public static class PermissionLevel {
@@ -554,6 +602,8 @@ public class Bande {
                     return bande.getAllies().size();
                 case KILLS:
                     return bande.getKills();
+                case RIVALKILLS:
+                    return bande.getRivalKills();
                 case VAGTKILLS:
                     return bande.vagtKills;
                 case OFFIKILLS:
@@ -628,6 +678,17 @@ public class Bande {
                     return 4;
                 }
             },
+            RIVALKILLS {
+                @Override
+                String getSuffix() {
+                    return "rival kills";
+                }
+
+                @Override
+                int priority() {
+                    return 5;
+                }
+            },
             VAGTKILLS{
                 @Override
                 public String getSuffix() {
@@ -635,7 +696,7 @@ public class Bande {
                 }
                 @Override
                 public int priority() {
-                    return 4;
+                    return 6;
                 }
             },
             OFFIKILLS{
@@ -645,27 +706,27 @@ public class Bande {
                 }
                 @Override
                 public int priority() {
-                    return 5;
+                    return 7;
                 }
             },
             INSKILLS{
                 @Override
                 public String getSuffix() {
-                    return "inspekt\u00f8r kills";
+                    return "inspektør kills";
                 }
                 @Override
                 public int priority() {
-                    return 6;
+                    return 8;
                 }
             },
             DIRKILLS{
                 @Override
                 public String getSuffix() {
-                    return "direkt\u00f8r kills";
+                    return "direktør kills";
                 }
                 @Override
                 public int priority() {
-                    return 7;
+                    return 9;
                 }
             };
 

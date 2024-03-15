@@ -1,15 +1,17 @@
 package dk.wavebleak.bandeplugin;
 
 
+import dk.wavebleak.bandeplugin.classes.Bande;
+import dk.wavebleak.bandeplugin.classes.BandeTerritorie;
 import dk.wavebleak.bandeplugin.classes.Info;
 import dk.wavebleak.bandeplugin.classes.InventoryData;
-import dk.wavebleak.bandeplugin.classes.Bande;
 import dk.wavebleak.bandeplugin.command.BandeCommand;
 import dk.wavebleak.bandeplugin.events.GUIChangeEvent;
 import dk.wavebleak.bandeplugin.events.PlayerDeathEvent;
 import dk.wavebleak.bandeplugin.events.PlayerHitPlayerEvent;
 import dk.wavebleak.bandeplugin.utils.GithubUtils;
 import dk.wavebleak.bandeplugin.utils.Manager;
+import hm.zelha.particlesfx.util.ParticleSFX;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,23 +21,43 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 import static dk.wavebleak.bandeplugin.utils.GithubUtils.checkVersion;
 
-@SuppressWarnings("all")
+
 public final class BandePlugin extends JavaPlugin {
 
     public static BandePlugin instance;
     public static Manager manager;
     public List<Bande> bander;
+    public List<BandeTerritorie> territories;
     public static HashMap<OfflinePlayer, Bande> invites;
     public static Economy economy = null;
     public static HashMap<Player, InventoryData> inventoryManager = new HashMap<>();
     public static Info info;
 
     public static String[] bannedNames = {
-            "HeJ" //TODO: Add slurs
+            " ",
+            "nigger",
+            "slut",
+            "kælling",
+            "tisse",
+            "nosse",
+            "bitch",
+            "neger",
+            "sut",
+            "pik",
+            "penis",
+            "fallos",
+            "vagina",
+            "fisse",
+            "gina",
+            "porn",
+            "niga",
+            "niger",
+            "nigga"
     };
 
     @Override
@@ -44,9 +66,11 @@ public final class BandePlugin extends JavaPlugin {
         instance = this;
 
         manager = new Manager();
-        bander = manager.loadData();
+        bander = manager.loadBande();
+        territories = manager.loadTerritories();
         invites = new HashMap<>();
         inventoryManager = new HashMap<>();
+        //api = HolographicDisplaysAPI.get(this);
 
         try {
             info = GithubUtils.getInfo();
@@ -62,16 +86,20 @@ public final class BandePlugin extends JavaPlugin {
 
         getCommand("bande").setExecutor(new BandeCommand());
 
+        ParticleSFX.setPlugin(this);
+
         if(!checkVersion(info)) {
             panic();
         }
+
+
     }
 
     public void panic() {
-        getLogger().warning("FOR\u00C6LDET VERSION AF BANDE, DISABLER PLUGINNET");
-        getLogger().warning("ADD \"wavebleak\" P\u00C5 DISCORD FOR AT FIXE DET");
-        getLogger().warning("FOR\u00C6LDET VERSION AF BANDE, DISABLER PLUGINNET");
-        Bukkit.broadcastMessage(ChatColor.RED + "FOR\u00C6LDET VERSION AF BANDE, DISABLER PLUGINNET, ADD \"wavebleak\" P\u00C5 DISCORD FOR AT FIXE DET"); //TODO: Make this pretti
+        getLogger().warning("FORÆLDET VERSION AF BANDE, DISABLER PLUGINNET");
+        getLogger().warning("ADD \"wavebleak\" PÅ DISCORD FOR AT FIXE DET");
+        getLogger().warning("FORÆLDET VERSION AF BANDE, DISABLER PLUGINNET");
+        Bukkit.broadcastMessage(ChatColor.RED + "FORÆLDET VERSION AF BANDE, DISABLER PLUGINNET, ADD \"wavebleak\" PÅ DISCORD FOR AT FIXE DET"); //TODO: Make this pretti
         Bukkit.getPluginManager().disablePlugin(this);
     }
 
@@ -85,15 +113,20 @@ public final class BandePlugin extends JavaPlugin {
     }
 
     public void load() {
-        bander = manager.refreshData();
+        bander = manager.refreshBande();
+        territories = manager.refreshTerrirtory();
     }
 
     public void save() {
-        manager.saveData(bander);
+        manager.saveBande(bander);
+        manager.saveTerritory(territories);
     }
 
     @Override
     public void onDisable() {
-        manager.saveData(bander);
+        save();
+        for(BandeTerritorie territorie : territories) {
+
+        }
     }
 }
