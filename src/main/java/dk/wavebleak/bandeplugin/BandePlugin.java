@@ -13,12 +13,14 @@ import dk.wavebleak.bandeplugin.utils.GithubUtils;
 import dk.wavebleak.bandeplugin.utils.Manager;
 import hm.zelha.particlesfx.util.ParticleSFX;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ public final class BandePlugin extends JavaPlugin {
     public static Economy economy = null;
     public static HashMap<Player, InventoryData> inventoryManager = new HashMap<>();
     public static Info info;
+    public static Permission permission;
 
     public static String[] bannedNames = {
             " ",
@@ -80,6 +83,11 @@ public final class BandePlugin extends JavaPlugin {
 
         setupEconomy();
 
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
+        if(permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
+
         getServer().getPluginManager().registerEvents(new GUIChangeEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerDeathEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerHitPlayerEvent(), this);
@@ -91,6 +99,30 @@ public final class BandePlugin extends JavaPlugin {
         if(!checkVersion(info)) {
             panic();
         }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for(Player player : Bukkit.getOnlinePlayers()) {
+                    Bande bande = Bande.getBande(player);
+                    if((bande == null || !bande.owner().equals(player)) && permission.playerHas(player, "bandehus")) {
+                        permission.playerRemove(player, "bandehus");
+                        continue;
+                    }
+                    if(bande == null || !bande.owner().equals(player)){
+                        continue;
+                    }
+                    if(bande.isUnlockedHouse() && !permission.playerHas(player, "bandehus")) {
+                        permission.playerAdd(player, "bandehus");
+                        continue;
+                    }
+                    if(!bande.isUnlockedHouse() && permission.playerHas(player, "bandehus")) {
+                        permission.playerRemove(player, "bandehus");
+                    }
+
+                }
+            }
+        }.runTaskTimer(this, 10, 10);
 
 
     }

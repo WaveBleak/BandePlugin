@@ -1,5 +1,6 @@
 package dk.wavebleak.bandeplugin.events;
 
+import dk.wavebleak.bandeplugin.classes.Bande;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import static dk.wavebleak.bandeplugin.BandePlugin.inventoryManager;
+import static dk.wavebleak.bandeplugin.BandePlugin.permission;
 
 public class GUIChangeEvent implements Listener {
 

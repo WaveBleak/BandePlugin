@@ -3,12 +3,18 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
+shadowJar {
+    destinationDirectory.set(file('E:/Intellij/TestServer/plugins'))
+}
+
 group = 'dk.wavebleak'
 version = '1.0'
 
 compileJava {
     options.encoding = 'UTF-8'
 }
+
+
 
 repositories {
     mavenCentral()

@@ -1,4 +1,4 @@
-name: BandePlugin
+name: Bande
 version: 1.0
 main: dk.wavebleak.bandeplugin.BandePlugin
 commands:
