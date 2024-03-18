@@ -355,9 +355,11 @@ public class Bande {
     }
 
 
-
     public static Bande getBande(OfflinePlayer player) {
         return BandePlugin.instance.bander.stream().filter(x -> x.members().containsKey(player)).findFirst().orElse(null);
+    }
+    public static Bande getBande(String uuid) {
+        return BandePlugin.instance.bander.stream().filter(x -> x.getBandeID().equals(uuid)).findFirst().orElse(null);
     }
 
     public static boolean isSameTeam(OfflinePlayer first, OfflinePlayer second) {

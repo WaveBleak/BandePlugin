@@ -1,11 +1,9 @@
 package dk.wavebleak.bandeplugin;
 
 
-import dk.wavebleak.bandeplugin.classes.Bande;
-import dk.wavebleak.bandeplugin.classes.BandeTerritorie;
-import dk.wavebleak.bandeplugin.classes.Info;
-import dk.wavebleak.bandeplugin.classes.InventoryData;
+import dk.wavebleak.bandeplugin.classes.*;
 import dk.wavebleak.bandeplugin.command.BandeCommand;
+import dk.wavebleak.bandeplugin.events.ClickBlockEvent;
 import dk.wavebleak.bandeplugin.events.GUIChangeEvent;
 import dk.wavebleak.bandeplugin.events.PlayerDeathEvent;
 import dk.wavebleak.bandeplugin.events.PlayerHitPlayerEvent;
@@ -25,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static dk.wavebleak.bandeplugin.utils.GithubUtils.checkVersion;
 
@@ -63,6 +62,9 @@ public final class BandePlugin extends JavaPlugin {
             "nigga"
     };
 
+    public HashMap<String, Thread> threadMap = new HashMap<>();
+    public static HashMap<Player, CloseInventoryData> closeInventoryManager = new HashMap<>();
+
     @Override
     public void onEnable() {
         if(!getDataFolder().exists()) getDataFolder().mkdir();
@@ -73,7 +75,8 @@ public final class BandePlugin extends JavaPlugin {
         territories = manager.loadTerritories();
         invites = new HashMap<>();
         inventoryManager = new HashMap<>();
-        //api = HolographicDisplaysAPI.get(this);
+
+        ParticleSFX.setPlugin(this);
 
         try {
             info = GithubUtils.getInfo();
@@ -91,6 +94,7 @@ public final class BandePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GUIChangeEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerDeathEvent(), this);
         getServer().getPluginManager().registerEvents(new PlayerHitPlayerEvent(), this);
+        getServer().getPluginManager().registerEvents(new ClickBlockEvent(), this);
 
         getCommand("bande").setExecutor(new BandeCommand());
 
@@ -100,6 +104,15 @@ public final class BandePlugin extends JavaPlugin {
             panic();
         }
 
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for(BandeTerritorie territorie : territories) {
+                    territorie.spawn();
+                }
+            }
+        }.runTaskLater(this, 5);
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -158,7 +171,7 @@ public final class BandePlugin extends JavaPlugin {
     public void onDisable() {
         save();
         for(BandeTerritorie territorie : territories) {
-
+            territorie.deleteHologram();
         }
     }
 }

@@ -45,6 +45,7 @@ dependencies {
     implementation "hm.zelha:particlesfx:1.8.8"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly "org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT"
+    compileOnly 'com.github.decentsoftware-eu:decentholograms:2.8.6'
 }
 
 

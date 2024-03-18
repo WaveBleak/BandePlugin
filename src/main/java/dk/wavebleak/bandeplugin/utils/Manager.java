@@ -106,12 +106,16 @@ public class Manager {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("ownedBandeID", bandeTerritorie.getOwnedBandeID());
+        jsonObject.addProperty("name", bandeTerritorie.getName());
         jsonObject.addProperty("x", bandeTerritorie.getX());
         jsonObject.addProperty("y", bandeTerritorie.getY());
         jsonObject.addProperty("z", bandeTerritorie.getZ());
+        jsonObject.addProperty("world", bandeTerritorie.getWorld().getName());
         jsonObject.addProperty("minBread", bandeTerritorie.getMinBread());
         jsonObject.addProperty("maxBread", bandeTerritorie.getMaxBread());
         jsonObject.addProperty("breadInterval", bandeTerritorie.getBreadInterval());
+        jsonObject.addProperty("generatedBread", bandeTerritorie.getGeneratedBread());
+        jsonObject.addProperty("doNotTouch", bandeTerritorie.getDoNotTouch());
 
         return jsonObject;
     }).create();
@@ -139,8 +143,8 @@ public class Manager {
             try {
                 if(territoryFile.createNewFile()) {
                     List<BandeTerritorie> territories = new ArrayList<>();
-                    territories.add(new BandeTerritorie("", 10, 20, 30, 5, 10, 60));
-                    territories.add(new BandeTerritorie("", 40, 50, 60, 15, 20, 120));
+                    territories.add(new BandeTerritorie("", "test1", 10, 20, 30, "world", 5, 10, 60, 10, 0));
+                    territories.add(new BandeTerritorie("", "test2", 40, 50, 60, "world", 15, 20, 120, 10, 0));
 
                     saveTerritory(territories);
                 }

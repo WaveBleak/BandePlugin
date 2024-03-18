@@ -7,6 +7,8 @@ import dk.wavebleak.bandeplugin.utils.ItemUtils;
 import dk.wavebleak.bandeplugin.utils.PlayerUtils;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.*;
+import org.bukkit.block.Banner;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -48,13 +50,57 @@ public class BandeCommand implements CommandExecutor {
             showAdminMenu(player);
             return true;
         }
-        if(args.length >= 2 && args[0].equalsIgnoreCase("invite")) {
+        if(args.length >= 1 && args[0].equalsIgnoreCase("invite")) {
             handleInvite(player, args);
+            return true;
+        }
+        if(args.length >= 1 && args[0].equalsIgnoreCase("addterritory") && PlayerUtils.IsOP(player)) {
+            handleTerritory(player, args);
             return true;
         }
 
         openMainInventory(player);
         return true;
+    }
+
+    public void handleTerritory(Player player, String[] args) {
+        if(args.length < 5) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fBrug /bande addterritory <navn> <minBrød> <maxBrød> <breadInterval>"));
+            return;
+        }
+        String name;
+        int minBrød;
+        int maxBrød;
+        int breadInterval;
+        try {
+            name = args[1];
+            minBrød = Integer.parseInt(args[2]);
+            maxBrød = Integer.parseInt(args[3]);
+            breadInterval = Integer.parseInt(args[4]);
+        }catch (NumberFormatException e) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu skrev ikke heltal!"));
+            return;
+        }
+
+        Block targetBlock = player.getTargetBlock((HashSet<Byte>) null, 5);
+
+        if(targetBlock == null || !(targetBlock.getType() == Material.STANDING_BANNER)) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu kikker ikke på et banner!"));
+            return;
+        }
+
+        if (BandePlugin.instance.territories.stream().anyMatch(x -> x.getName().equals(name))) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDer findes allerade et territorie med det navn!"));
+            return;
+        }
+
+        BandeTerritorie territorie = new BandeTerritorie(name, targetBlock.getLocation(), maxBrød, minBrød, breadInterval);
+
+        territorie.spawn();
+
+        BandePlugin.instance.territories.add(territorie);
+
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu har lavet et nyt territorie!"));
     }
 
     public void handleInvite(Player player, String[] args) {
