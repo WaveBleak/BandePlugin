@@ -343,7 +343,7 @@ public class BandeCommand implements CommandExecutor {
 
             inventory.setItem(8, generateLeaderboard());
             inventory.setItem(19, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTFkZGIyZmQ3NzIwMDcxNjk0ZTllODBhNmY0YThiOGFiYTc3NjBiYjFkYTQ2OGRlNjM3YTZiZjljODVlYTVhZSJ9fX0="), "&c&lBANK", " ", "&f&lHer kan du administrere:", "&8⬤ &fBande økonomi", "", "&8&l〔 &f&lTRYK HER &8&l 〕"));
-            inventory.setItem(21, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTMzZmM5YTQ1YmUxM2NhNTdhNzhiMjE3NjJjNmUxMjYyZGFlNDExZjEzMDQ4Yjk2M2Q5NzJhMjllMDcwOTZhYiJ9fX0="), "&c&lOPGRADERINGER", " ", "&f&lHer kan du købe:", "&8⬤ &f&mAdgang til territorier", "&8⬤ &fMindre ally damage", "&8⬤ &fAdgang til bande hus", "", "&8&l〔 &f&lTRYK HER &8&l 〕"));
+            inventory.setItem(21, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTMzZmM5YTQ1YmUxM2NhNTdhNzhiMjE3NjJjNmUxMjYyZGFlNDExZjEzMDQ4Yjk2M2Q5NzJhMjllMDcwOTZhYiJ9fX0="), "&c&lOPGRADERINGER", " ", "&f&lHer kan du købe:", "&8⬤ &fAdgang til territorier", "&8⬤ &fMindre ally damage", "&8⬤ &fAdgang til bande hus", "", "&8&l〔 &f&lTRYK HER &8&l 〕"));
 
             /* Fix for medlemmer icon showing up late */
             inventory.setItem(23, ItemUtils.setNameAndLore(ItemUtils.getSkull(bande.owner()), "&c&lMEDLEMMER", " ", "&f&lHer kan du administrere:", "&8⬤ &fBande medlemmer", " ", "&8&l〔 &f&lTRYK HER &8&l 〕"));
@@ -617,11 +617,11 @@ public class BandeCommand implements CommandExecutor {
 
         List<String> territorieLore = new ArrayList<>(Arrays.asList("&fMed territorier kan du eje et område", "&fsom generere goder, der kan sælges på det sorte marked", "&fmen andre bander kan angribe jer og stjæle jeres territorie!", ""));
 
-        //if(hasUnlockedTerritory) {
-        //    territorieLore.addAll(Arrays.asList("&c&lDin bande ejer allerrade dette", ""));
-        //} else {
-        //    territorieLore.addAll(Arrays.asList(territorieFarve + "$" + territoriePris, ""));
-        //}
+        if(hasUnlockedTerritory) {
+            territorieLore.addAll(Arrays.asList("&c&lDin bande ejer allerrade dette", ""));
+        } else {
+            territorieLore.addAll(Arrays.asList(territorieFarve + "$" + territoriePris, ""));
+        }
 
         List<String> allyDamageLore = new ArrayList<>(Arrays.asList("&fAlly Damage Upgrade giver dig mindre skade", "&fTil både allierede men også dine bande medlemmer", "&fPrisen stiger jo mindre skade du gør!", "", "&fNuværende skade: &b&n" + bande.getAllyHitMitigation() + "&f%", ""));
         
@@ -645,9 +645,9 @@ public class BandeCommand implements CommandExecutor {
             if(!hasUnlockedAlly) {
                 allyDamageLore.add("&8&l〔 &f&lTRYK HER &8&l 〕");
             }
-            //if(!hasUnlockedTerritory) {
-            //    territorieLore.add("&8&l〔 &f&lTRYK HER &8&l 〕");
-            //}
+            if(!hasUnlockedTerritory) {
+                territorieLore.add("&8&l〔 &f&lTRYK HER &8&l 〕");
+            }
         } else {
             if(!hasUnlockedHouse) {
                 husLore.add("&8&l〔 &f&lDin bande har ikke givet dig tilladelse til dette 〕");
@@ -655,12 +655,10 @@ public class BandeCommand implements CommandExecutor {
             if(!hasUnlockedAlly) {
                 allyDamageLore.add("&8&l〔 &f&lDin bande har ikke givet dig tilladelse til dette 〕");
             }
-            //if(!hasUnlockedTerritory) {
-            //    territorieLore.add("&8&l〔 &f&lDin bande har ikke givet dig tilladelse til dette 〕");
-            //}
+            if(!hasUnlockedTerritory) {
+                territorieLore.add("&8&l〔 &f&lDin bande har ikke givet dig tilladelse til dette 〕");
+            }
         }
-
-        territorieLore.add("&c&lKommer snart!");
 
 
         inventory.setItem(4, bande.getDisplaySkull());
@@ -703,8 +701,6 @@ public class BandeCommand implements CommandExecutor {
 
                     break;
                 case 20: //Territorie
-                    break;
-                    /*
                     if(bande.isUnlockedTerritory()) return;
                     if(!(bande.getMemberRank(player) >= Bande.PermissionLevel.PUSHER)) return;
 
@@ -726,7 +722,7 @@ public class BandeCommand implements CommandExecutor {
                     }
                     showUpgradesMenu(player);
 
-                    break;*/
+                    break;
                 case 24:
                     if(bande.isUnlockedHouse()) return;
                     if(!(bande.getMemberRank(player) >= Bande.PermissionLevel.PUSHER)) return;

@@ -5,6 +5,7 @@ import dk.wavebleak.bandeplugin.classes.*;
 import dk.wavebleak.bandeplugin.utils.*;
 import hm.zelha.particlesfx.particles.ParticleDustColored;
 import hm.zelha.particlesfx.shapers.ParticleCircle;
+import hm.zelha.particlesfx.shapers.ParticleCircleFilled;
 import hm.zelha.particlesfx.util.LocationSafe;
 import hm.zelha.particlesfx.util.ParticleSFX;
 import org.bukkit.*;
@@ -65,7 +66,8 @@ public class ClickBlockEvent implements Listener {
         boolean ownsTerritory = false;
         boolean isOwned = selectedTerritory.isCurrentlyOwned();
 
-        if(selectedTerritory.isCurrentlyOwned()) {
+
+        if(bande != null && selectedTerritory.isCurrentlyOwned()) {
             ownsTerritory = selectedTerritory.getCurrentlyOwned().equals(bande);
         }
 
@@ -75,15 +77,25 @@ public class ClickBlockEvent implements Listener {
         }
         if(!isOwned) {
             if(bande != null) {
-                showOwnMenu(player, selectedTerritory);
+                if(bande.isUnlockedTerritory()) {
+                    showOwnMenu(player, selectedTerritory);
+                }else {
+                    player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fLås op for bande territorier i upgrades menuen i &n/bande&r&f!"));
+                }
             } else {
-                player.playSound(player.getLocation(), Sound.ANVIL_LAND, 1, 1);
+                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu ejer ikke en bande!"));
             }
         } else if(bande != null) {
-            showFightMenu(player, selectedTerritory);
+            if(bande.isUnlockedTerritory()) {
+                showFightMenu(player, selectedTerritory);
+            } else {
+                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fLås op for bande territorier i upgrades menuen i &n/bande&r&f!"));
+            }
         } else {
-            player.playSound(player.getLocation(), Sound.ANVIL_LAND, 1, 1);
+            player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1, 1);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDu ejer ikke en bande!"));
         }
 
@@ -116,6 +128,7 @@ public class ClickBlockEvent implements Listener {
             player.closeInventory();
             player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 1);
             territory.update();
+            BandePlugin.gracePeriod.put(territory, 600);
         };
 
         BandePlugin.inventoryManager.put(player, new InventoryData(lambda, inventory));
@@ -136,12 +149,23 @@ public class ClickBlockEvent implements Listener {
         Inventory inventory = Bukkit.createInventory(null, 5*9, ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &0" + territory.getName()));
         InventoryUtils.createBorders(inventory);
 
-        inventory.setItem(22, ItemUtils.setNameAndLore(Material.IRON_SWORD, "&c&lOvertag Territorie", "&fStart en kamp hvor du skal forblive i nærheden", "&faf dette territorie i 30 sekunder for at overtage det", "&fhvis du fejler beholder &n" + territory.getOwnedBande().getName() + "&r &fterritoriet!"));
+        inventory.setItem(4, territory.getOwnedBande().getDisplaySkull());
+
+        boolean isGracePeriod = BandePlugin.gracePeriod.containsKey(territory);
+
+        if(isGracePeriod) {
+            inventory.setItem(22, ItemUtils.setNameAndLore(Material.DIAMOND_CHESTPLATE, "&c&lBeskyttet Territorie", "&fDette territorie er lige nu beskyttet imod angreb fra andre bander", "&fKom venligst tilbage om:", " ", "&f&n" + StringUtils.formatTime(BandePlugin.gracePeriod.get(territory)) + "&r&f!"));
+        } else {
+            inventory.setItem(22, ItemUtils.setNameAndLore(Material.IRON_SWORD, "&c&lOvertag Territorie", "&fStart en kamp hvor du skal forblive i nærheden", "&faf dette territorie i 30 sekunder for at overtage det", "&fhvis du fejler beholder &n" + territory.getOwnedBande().getName() + "&r &fterritoriet!"));
+        }
+
+
 
         player.openInventory(inventory);
 
         InventoryManager lambda = (InventoryClickEvent event) -> {
               if(event.getSlot() != 22) return;
+              if(isGracePeriod) return;
 
               startFight(Bande.getBande(player), territory);
               player.closeInventory();
@@ -172,9 +196,11 @@ public class ClickBlockEvent implements Listener {
         List<ParticleCircle> circles = new ArrayList<>();
 
         for(float i = 0; i > -1; i -= 0.1f) {
-            circles.add(new ParticleCircle(new ParticleDustColored(ColorUtils.fromBukkitColor(ColorUtils.getTop3ColorsFromSkin(territory.getOwnedBande().owner())[0])), new LocationSafe(startCenter.add(0, i, 0)), radius));
+            circles.add(new ParticleCircle(new ParticleDustColored(ColorUtils.fromBukkitColor(ColorUtils.getTop3ColorsFromSkin(territory.getOwnedBande().owner())[0])), new LocationSafe(startCenter.clone().add(0, i, 0)), radius));
         }
+        ParticleCircleFilled filledCircled = new ParticleCircleFilled(new ParticleDustColored(ColorUtils.fromBukkitColor(ColorUtils.getTop3ColorsFromSkin(territory.getOwnedBande().owner())[1])), new LocationSafe(startCenter.clone()), radius - 0.2);
 
+        filledCircled.start();
         for(ParticleCircle circle : circles) {
             circle.start();
         }
@@ -204,13 +230,15 @@ public class ClickBlockEvent implements Listener {
                                     .withTrail()
                                     .withColor(colors[0], colors[1], colors[2])
                                     .build(),
-                            startCenter.clone().add(0.5, 1, 0.5));
+                            startCenter.clone().add(0, 1, 0));
                     territory.setOwnedBandeID(attackerBande.getBandeID());
                     territory.setGeneratedBread(0);
                     territory.update();
                     for(ParticleCircle circle : circles) {
                         circle.stop();
                     }
+                    filledCircled.stop();
+                    BandePlugin.gracePeriod.put(territory, 600);
                     cancel();
                 }
 
@@ -233,10 +261,6 @@ public class ClickBlockEvent implements Listener {
                         if(attackerMember.isOnline()) {
                             attackerMember.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fI fejlede kampen for territoriet &n" + territory.getName() + "&r&f!"));
                             attackerMember.getPlayer().playSound(attackerMember.getPlayer().getLocation(), Sound.ANVIL_LAND, 1, 0.1f);
-                            for(ParticleCircle circle : circles) {
-                                circle.stop();
-                            }
-                            cancel();
                         }
                     }
                     for(OfflinePlayer defenderMember : defenderBande.members().keySet()) {
@@ -245,6 +269,12 @@ public class ClickBlockEvent implements Listener {
                             defenderMember.getPlayer().playSound(defenderMember.getPlayer().getLocation(), Sound.ANVIL_LAND, 1, 0.1f);
                         }
                     }
+                    for(ParticleCircle circle : circles) {
+                        circle.stop();
+                    }
+                    filledCircled.stop();
+                    BandePlugin.gracePeriod.put(territory, 600);
+                    cancel();
 
                 }
 
@@ -281,6 +311,8 @@ public class ClickBlockEvent implements Listener {
             generateBread(inventory, territory);
         }
 
+
+        inventory.setItem(4, territory.getOwnedBande().getDisplaySkull());
         inventory.setItem(40, ItemUtils.setNameAndLore(ItemUtils.getSkull("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ=="), "&c&lOpsig Territorie", "&fOpsig ejerskab af territoriet", " ", "&8&l〔 &f&lTRYK HER &8&l 〕"));
 
         player.openInventory(inventory);
@@ -288,7 +320,11 @@ public class ClickBlockEvent implements Listener {
         CloseInventoryManager closeLambda = (InventoryCloseEvent event) -> {
               int bread = countBread(event.getInventory());
 
-              territory.setGeneratedBread(bread);
+              if(territory.isCurrentlyOwned()) {
+                  territory.setGeneratedBread(bread);
+              } else {
+                  territory.setGeneratedBread(0);
+              }
         };
 
         InventoryManager lambda = (InventoryClickEvent event) -> {

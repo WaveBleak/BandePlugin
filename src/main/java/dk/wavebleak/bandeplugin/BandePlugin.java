@@ -64,6 +64,7 @@ public final class BandePlugin extends JavaPlugin {
 
     public HashMap<String, Thread> threadMap = new HashMap<>();
     public static HashMap<Player, CloseInventoryData> closeInventoryManager = new HashMap<>();
+    public static HashMap<BandeTerritorie, Integer> gracePeriod = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -105,6 +106,20 @@ public final class BandePlugin extends JavaPlugin {
         }
 
 
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < gracePeriod.keySet().size(); i++) {
+                    BandeTerritorie territorie = gracePeriod.keySet().toArray(new BandeTerritorie[0])[i];
+                    int seconds = gracePeriod.get(territorie);
+                    if(seconds <= 1) {
+                        gracePeriod.remove(territorie);
+                        continue;
+                    }
+                    gracePeriod.put(territorie, seconds - 1);
+                }
+            }
+        }.runTaskTimer(this, 20, 20);
         new BukkitRunnable() {
             @Override
             public void run() {
