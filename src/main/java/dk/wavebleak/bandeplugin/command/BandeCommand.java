@@ -89,7 +89,7 @@ public class BandeCommand implements CommandExecutor {
             return;
         }
 
-        if (BandePlugin.instance.territories.stream().anyMatch(x -> x.getName().equals(name))) {
+        if (BandePlugin.instance.territories != null && BandePlugin.instance.territories.stream().anyMatch(x -> x.getName().equals(name))) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8( &4&lBANDE &8) &fDer findes allerade et territorie med det navn!"));
             return;
         }

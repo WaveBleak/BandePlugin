@@ -196,9 +196,9 @@ public class ClickBlockEvent implements Listener {
         List<ParticleCircle> circles = new ArrayList<>();
 
         for(float i = 0; i > -1; i -= 0.1f) {
-            circles.add(new ParticleCircle(new ParticleDustColored(ColorUtils.fromBukkitColor(ColorUtils.getTop3ColorsFromSkin(territory.getOwnedBande().owner())[0])), new LocationSafe(startCenter.clone().add(0, i, 0)), radius));
+            circles.add(new ParticleCircle(new ParticleDustColored(hm.zelha.particlesfx.util.Color.DARK_GRAY), new LocationSafe(startCenter.clone().add(0, i, 0)), radius));
         }
-        ParticleCircleFilled filledCircled = new ParticleCircleFilled(new ParticleDustColored(ColorUtils.fromBukkitColor(ColorUtils.getTop3ColorsFromSkin(territory.getOwnedBande().owner())[1])), new LocationSafe(startCenter.clone()), radius - 0.2);
+        ParticleCircleFilled filledCircled = new ParticleCircleFilled(new ParticleDustColored(hm.zelha.particlesfx.util.Color.RED), new LocationSafe(startCenter.clone()), radius - 0.2);
 
         filledCircled.start();
         for(ParticleCircle circle : circles) {

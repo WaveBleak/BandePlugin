@@ -175,6 +175,9 @@ public final class BandePlugin extends JavaPlugin {
     public void load() {
         bander = manager.refreshBande();
         territories = manager.refreshTerrirtory();
+        for(BandeTerritorie territorie : territories) {
+            territorie.update();
+        }
     }
 
     public void save() {

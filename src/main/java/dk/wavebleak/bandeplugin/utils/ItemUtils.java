@@ -48,7 +48,7 @@ public class ItemUtils {
         SkullMeta meta = (SkullMeta) skullItem.getItemMeta();
 
 
-        GameProfile gameProfile = new GameProfile(player.getUniqueId(), null);
+        GameProfile gameProfile = new GameProfile(player.getUniqueId(), player.getName());
         gameProfile.getProperties().put("textures", new Property("textures", getTextureValue(player)));
 
         try {
@@ -82,7 +82,7 @@ public class ItemUtils {
         ItemStack skullItem = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
         SkullMeta meta = (SkullMeta) skullItem.getItemMeta();
 
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "Ingen...");
         gameProfile.getProperties().put("textures", new Property("textures", textureValue));
 
         try {

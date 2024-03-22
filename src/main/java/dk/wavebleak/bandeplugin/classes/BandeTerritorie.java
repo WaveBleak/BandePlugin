@@ -65,7 +65,7 @@ public class BandeTerritorie {
     }
 
     public boolean isBanner(Location location) {
-        return location.getBlock().equals(getLocation().getBlock());
+        return location.getBlock().equals(getLocation().getBlock()) || location.getBlock().equals(getLocation().clone().add(0, 1, 0).getBlock());
     }
 
     public void update() {
@@ -86,18 +86,13 @@ public class BandeTerritorie {
 
     private void updateBanner() {
         getWorld().getBlockAt(getLocation()).setType(Material.STANDING_BANNER);
+        getWorld().getBlockAt(getLocation().clone().add(0, 1, 0)).setType(Material.STRING);
         Banner banner = (Banner) getWorld().getBlockAt(getLocation()).getState();
 
         banner.setBaseColor(getCurrentColor());
 
         if(isCurrentlyOwned()) {
-            Color color = ColorUtils.getTop3ColorsFromSkin(getOwnedBande().owner())[0];
-            if(color != null) {
-                DyeColor dyeColor = ColorUtils.getClosestDyeColor(color);
-                if(dyeColor != null) {
-                    banner.setPatterns(Collections.singletonList(new Pattern(dyeColor, PatternType.FLOWER)));
-                }
-            }
+            banner.setPatterns(Collections.singletonList(new Pattern(DyeColor.BLACK, PatternType.FLOWER)));
         } else {
             banner.setPatterns(Collections.emptyList());
             generatedBread = 0;
@@ -141,6 +136,7 @@ public class BandeTerritorie {
 
     public void remove() {
         deleteHologram();
+        getWorld().getBlockAt(getLocation().clone().add(0, 1, 0)).setType(Material.AIR);
         getWorld().getBlockAt(getLocation()).setType(Material.AIR);
         BandePlugin.instance.threadMap.get(name + "-thread").interrupt();
         BandePlugin.instance.territories.remove(this);

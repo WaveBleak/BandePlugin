@@ -78,10 +78,7 @@ public class Bande {
 
 
     public void addAlly(Bande bande) {
-        Bukkit.broadcastMessage("LIST: " + String.join(", ", allies));
-        Bukkit.broadcastMessage("BANDEID: " + bande.bandeID);
         this.allies.add(bande.bandeID);
-        Bukkit.broadcastMessage("LIST: " + String.join(", ", allies));
     }
 
     public boolean hasAlly(Bande bande) {
